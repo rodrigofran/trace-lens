@@ -1,0 +1,264 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "PackageStructure": ["<PackageStructure>"]
+  "TraceLens-arm64-apple-macosx-debug.module": ["<TraceLens-arm64-apple-macosx-debug.module>"]
+  "TraceLensCapture-arm64-apple-macosx-debug.module": ["<TraceLensCapture-arm64-apple-macosx-debug.module>"]
+  "TraceLensCaptureTests-arm64-apple-macosx-debug.module": ["<TraceLensCaptureTests-arm64-apple-macosx-debug.module>"]
+  "TraceLensCore-arm64-apple-macosx-debug.module": ["<TraceLensCore-arm64-apple-macosx-debug.module>"]
+  "TraceLensCoreTests-arm64-apple-macosx-debug.module": ["<TraceLensCoreTests-arm64-apple-macosx-debug.module>"]
+  "TraceLensMetrics-arm64-apple-macosx-debug.module": ["<TraceLensMetrics-arm64-apple-macosx-debug.module>"]
+  "TraceLensMetricsTests-arm64-apple-macosx-debug.module": ["<TraceLensMetricsTests-arm64-apple-macosx-debug.module>"]
+  "TraceLensPackageTests-arm64-apple-macosx-debug.module": ["<TraceLensPackageTests-arm64-apple-macosx-debug.module>"]
+  "TraceLensStorage-arm64-apple-macosx-debug.module": ["<TraceLensStorage-arm64-apple-macosx-debug.module>"]
+  "TraceLensStorageTests-arm64-apple-macosx-debug.module": ["<TraceLensStorageTests-arm64-apple-macosx-debug.module>"]
+  "TraceLensUI-arm64-apple-macosx-debug.module": ["<TraceLensUI-arm64-apple-macosx-debug.module>"]
+  "main": ["<TraceLens-arm64-apple-macosx-debug.module>","<TraceLensCapture-arm64-apple-macosx-debug.module>","<TraceLensCore-arm64-apple-macosx-debug.module>","<TraceLensMetrics-arm64-apple-macosx-debug.module>","<TraceLensStorage-arm64-apple-macosx-debug.module>","<TraceLensUI-arm64-apple-macosx-debug.module>"]
+  "test": ["<TraceLens-arm64-apple-macosx-debug.module>","<TraceLensCapture-arm64-apple-macosx-debug.module>","<TraceLensCaptureTests-arm64-apple-macosx-debug.module>","<TraceLensCore-arm64-apple-macosx-debug.module>","<TraceLensCoreTests-arm64-apple-macosx-debug.module>","<TraceLensMetrics-arm64-apple-macosx-debug.module>","<TraceLensMetricsTests-arm64-apple-macosx-debug.module>","<TraceLensStorage-arm64-apple-macosx-debug.module>","<TraceLensStorageTests-arm64-apple-macosx-debug.module>","<TraceLensUI-arm64-apple-macosx-debug.module>"]
+default: "main"
+nodes:
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLens/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCapture/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensMetrics/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensUI/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCaptureTests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCoreTests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensMetricsTests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensStorageTests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLens.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLens/TraceLens.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLens.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLens.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCapture/TraceLensURLProtocol.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCaptureTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCaptureTests/CaptureTests.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCaptureTests.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCaptureTests.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/Configuration.swift","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/Models.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCoreTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCoreTests/CoreTests.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCoreTests.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCoreTests.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetrics.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensMetrics/MetricsAggregator.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetrics.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetrics.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetricsTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensMetricsTests/MetricsTests.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetricsTests.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetricsTests.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.derived/runner.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/SessionStore.swift","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/TemporaryBodyStore.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorageTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensStorageTests/StorageTests.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorageTests.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorageTests.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensUI/TraceLensDashboard.swift"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/sources"]
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/sources"
+
+  "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<TraceLens-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLens.swiftmodule"]
+    outputs: ["<TraceLens-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensCapture-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCapture.swiftmodule"]
+    outputs: ["<TraceLensCapture-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensCaptureTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCaptureTests.swiftmodule"]
+    outputs: ["<TraceLensCaptureTests-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensCore-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule"]
+    outputs: ["<TraceLensCore-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensCoreTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCoreTests.swiftmodule"]
+    outputs: ["<TraceLensCoreTests-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensMetrics-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetrics.swiftmodule"]
+    outputs: ["<TraceLensMetrics-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensMetricsTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetricsTests.swiftmodule"]
+    outputs: ["<TraceLensMetricsTests-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensPackageTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensPackageTests.swiftmodule"]
+    outputs: ["<TraceLensPackageTests-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensStorage-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule"]
+    outputs: ["<TraceLensStorage-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensStorageTests-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorageTests.swiftmodule"]
+    outputs: ["<TraceLensStorageTests-arm64-apple-macosx-debug.module>"]
+
+  "<TraceLensUI-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensUI.swiftmodule"]
+    outputs: ["<TraceLensUI-arm64-apple-macosx-debug.module>"]
+
+  "C.TraceLens-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Sources/TraceLens/TraceLens.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetrics.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCapture.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensUI.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLens.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLens.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLens' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLens","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLens.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLens.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLens.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLens.build/include/TraceLens-Swift.h","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensCapture-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCapture/TraceLensURLProtocol.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCapture.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensCapture' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensCapture","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCapture.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/include/TraceLensCapture-Swift.h","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensCaptureTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCaptureTests/CaptureTests.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCapture.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCaptureTests.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCaptureTests.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensCaptureTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensCaptureTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCaptureTests.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCaptureTests.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCaptureTests.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensCore-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/Configuration.swift","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/Models.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensCore' (2 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensCore","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/include/TraceLensCore-Swift.h","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensCoreTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCoreTests/CoreTests.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCoreTests.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCoreTests.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensCoreTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensCoreTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCoreTests.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCoreTests.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCoreTests.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensMetrics-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensMetrics/MetricsAggregator.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetrics.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetrics.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensMetrics' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensMetrics","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetrics.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetrics.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetrics.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetrics.build/include/TraceLensMetrics-Swift.h","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensMetricsTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensMetricsTests/MetricsTests.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetrics.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetricsTests.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetricsTests.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensMetricsTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensMetricsTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetricsTests.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetricsTests.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensMetricsTests.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensPackageTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.derived/runner.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorageTests.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetricsTests.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCoreTests.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCaptureTests.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensPackageTests.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensPackageTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensPackageTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensPackageTests.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensPackageTests.build/include/TraceLensPackageTests-Swift.h","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensStorage-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/SessionStore.swift","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/TemporaryBodyStore.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensStorage' (2 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensStorage","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/include/TraceLensStorage-Swift.h","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensStorageTests-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensStorageTests/StorageTests.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorageTests.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorageTests.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensStorageTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensStorageTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorageTests.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorageTests.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorageTests.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "C.TraceLensUI-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensUI/TraceLensDashboard.swift","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensCore.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensStorage.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensMetrics.swiftmodule","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/sources"]
+    outputs: ["/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensUI.swiftmodule"]
+    description: "Compiling Swift Module 'TraceLensUI' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","TraceLensUI","-emit-dependencies","-emit-module","-emit-module-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules/TraceLensUI.swiftmodule","-output-file-map","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/output-file-map.json","-parse-as-library","-incremental","@/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/sources","-I","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j10","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/include/TraceLensUI-Swift.h","-swift-version","6","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","tracelens"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/rodrigo/Projetos/TraceLens/Sources/TraceLens/","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCapture/","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensMetrics/","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/","/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensUI/","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCaptureTests/","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensCoreTests/","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensMetricsTests/","/Users/rodrigo/Projetos/TraceLens/Tests/TraceLensStorageTests/","/Users/rodrigo/Projetos/TraceLens/Package.swift","/Users/rodrigo/Projetos/TraceLens/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

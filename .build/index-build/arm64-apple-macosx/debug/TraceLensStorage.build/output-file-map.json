@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/primary.swiftdeps"
+  },
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/SessionStore.swift": {
+    "dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/SessionStore.d",
+    "object": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/SessionStore.swift.o",
+    "swiftmodule": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/SessionStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/SessionStore.swiftdeps",
+    "diagnostics": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/SessionStore.dia"
+  },
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensStorage/TemporaryBodyStore.swift": {
+    "dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/TemporaryBodyStore.d",
+    "object": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/TemporaryBodyStore.swift.o",
+    "swiftmodule": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/TemporaryBodyStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/TemporaryBodyStore.swiftdeps",
+    "diagnostics": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/TemporaryBodyStore.dia"
+  }
+}

@@ -1,0 +1,3 @@
+module TraceLensCore {
+    header "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCore.build/include/TraceLensCore-Swift.h"
+}

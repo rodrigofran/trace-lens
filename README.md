@@ -17,12 +17,30 @@ TraceLens.start(configuration: .init(
 ))
 ```
 
-Para que as requests sejam observadas, instrumente a configuração antes de criar a `URLSession`:
+Para stacks simples, sem `URLSessionDelegate` customizado ou SSL Pinning, é possível instrumentar a configuração antes de criar a `URLSession`:
 
 ```swift
 let configuration = TraceLens.instrument(.default)
 let session = URLSession(configuration: configuration)
 ```
+
+Para SDCore e outros stacks que controlam SSL Pinning, delegates ou a configuração da sessão, use a observação passiva. O stack continua executando a request real; o TraceLens apenas recebe os eventos:
+
+```swift
+let observation = await TraceLens.beginObservation(finalURLRequest)
+
+// SDCore executa a request com sua URLSession e SSL Pinning originais.
+
+if let observation {
+    await TraceLens.recordResponse(
+        urlResponse,
+        body: responseData,
+        for: observation
+    )
+}
+```
+
+Em caso de erro, registre-o com `await TraceLens.recordFailure(error, for: observation)`. Se o SDCore expuser métricas, use `await TraceLens.recordMetrics(metrics, for: observation)`.
 
 Apresente `TraceLensView` em uma `fullScreenCover`, destino de navegação ou janela de debug. Use `await TraceLens.clearSession()` para limpar a sessão e `try await TraceLens.exportSession()` para exportá-la.
 
@@ -92,4 +110,4 @@ O exemplo incluído em `Examples/TraceLensDemo` ilustra essa organização em um
 
 TraceLens mantém apenas a sessão atual e remove arquivos temporários de body ao limpar/parar uma sessão e na inicialização. Os limites padrão são 1.000 transações, 5 MB por body e 100 MB de armazenamento temporário.
 
-A captura por `URLProtocol` é suportada para instâncias de `URLSessionConfiguration` instrumentadas explicitamente e em primeiro plano. Sessões criadas antes da instrumentação, sessões em background, outras bibliotecas de rede e todos os detalhes de redirecionamento podem não ser observados. Uma falha de captura nunca deve bloquear a request original.
+A captura por `URLProtocol` é suportada para instâncias de `URLSessionConfiguration` instrumentadas explicitamente e em primeiro plano, mas não deve ser usada em stacks com delegate customizado ou SSL Pinning. Para esses casos, use a observação passiva. Sessões criadas antes da instrumentação, sessões em background, outras bibliotecas de rede e todos os detalhes de redirecionamento podem não ser observados. Uma falha de captura nunca deve bloquear a request original.

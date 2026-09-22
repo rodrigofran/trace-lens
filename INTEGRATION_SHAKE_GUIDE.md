@@ -45,28 +45,33 @@ struct MeuApp: App {
 }
 ```
 
-## 3. Instrumente a URLSession do app
+## 3. Integre a observação à camada de rede
 
-Ao criar a `URLSession` usada pelas requests, use uma configuração instrumentada:
-
-```swift
-import Foundation
-import TraceLens
-
-let configuration = TraceLens.instrument(.default)
-let session = URLSession(configuration: configuration)
-```
-
-Se o app já tem uma `URLSessionConfiguration` personalizada, instrumente essa instância:
+Se a camada de rede controla SSL Pinning, delegates ou uma `URLSessionConfiguration` personalizada, não use `TraceLens.instrument(...)`. Preserve a execução normal e notifique o TraceLens sobre o ciclo da request:
 
 ```swift
-let configuration = URLSessionConfiguration.default
-configuration.timeoutIntervalForRequest = 30
-configuration.timeoutIntervalForResource = 60
+let observation = await TraceLens.beginObservation(finalURLRequest)
 
-let instrumentedConfiguration = TraceLens.instrument(configuration)
-let session = URLSession(configuration: instrumentedConfiguration)
+// A camada de rede executa a request normalmente.
+
+if let observation {
+    await TraceLens.recordResponse(
+        urlResponse,
+        body: responseData,
+        for: observation
+    )
+}
 ```
+
+Em caso de falha:
+
+```swift
+if let observation {
+    await TraceLens.recordFailure(error, for: observation)
+}
+```
+
+O ponto de integração deve receber a `URLRequest` final, imediatamente antes de iniciar a task, e a `URLResponse`/`Data` finais. Assim, SSL Pinning e toda a configuração existente permanecem intactos.
 
 ## 4. Adicione um detector de chacoalhar
 
@@ -146,4 +151,4 @@ Substitua `MainAppView()` pela view raiz real do app.
 - Mantenha `sensitiveDataPolicy: .redacted` ao testar tráfego com dados reais.
 - Não registre, versione ou exponha tokens, chaves de API ou credenciais.
 - Use `.metadata` como captura padrão e `.full` somente em hosts seguros para desenvolvimento.
-- Se as requests não aparecerem, confirme que o app usa uma `URLSession` criada a partir de `TraceLens.instrument(...)`.
+- Se as requests não aparecerem, confirme que a camada de rede chama `beginObservation` antes de iniciar a task e registra response ou erro ao final.

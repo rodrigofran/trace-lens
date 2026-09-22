@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/primary.swiftdeps"
+  },
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensUI/TraceLensDashboard.swift": {
+    "dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/TraceLensDashboard.d",
+    "object": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/TraceLensDashboard.swift.o",
+    "swiftmodule": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/TraceLensDashboard~partial.swiftmodule",
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/TraceLensDashboard.swiftdeps",
+    "diagnostics": "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensUI.build/TraceLensDashboard.dia"
+  }
+}
