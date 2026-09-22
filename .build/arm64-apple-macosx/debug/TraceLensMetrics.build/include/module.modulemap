@@ -1,0 +1,3 @@
+module TraceLensMetrics {
+    header "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensMetrics.build/include/TraceLensMetrics-Swift.h"
+}

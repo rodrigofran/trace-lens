@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/primary.swiftdeps"
+  },
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/Configuration.swift": {
+    "dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Configuration.d",
+    "object": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Configuration.swift.o",
+    "swiftmodule": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Configuration~partial.swiftmodule",
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Configuration.swiftdeps",
+    "diagnostics": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Configuration.dia"
+  },
+  "/Users/rodrigo/Projetos/TraceLens/Sources/TraceLensCore/Models.swift": {
+    "dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Models.d",
+    "object": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Models.swift.o",
+    "swiftmodule": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Models~partial.swiftmodule",
+    "swift-dependencies": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Models.swiftdeps",
+    "diagnostics": "/Users/rodrigo/Projetos/TraceLens/.build/arm64-apple-macosx/debug/TraceLensCore.build/Models.dia"
+  }
+}
