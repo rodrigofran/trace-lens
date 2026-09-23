@@ -1,3 +1,0 @@
-module TraceLensStorage {
-    header "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensStorage.build/include/TraceLensStorage-Swift.h"
-}

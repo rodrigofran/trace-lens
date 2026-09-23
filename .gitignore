@@ -1,0 +1,5 @@
+# Artefatos locais gerados pelo Swift Package Manager e Xcode.
+.build/
+
+# Metadados locais do Xcode.
+DerivedData/

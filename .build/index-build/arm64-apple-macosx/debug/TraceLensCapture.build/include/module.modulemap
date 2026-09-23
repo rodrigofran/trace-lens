@@ -1,3 +1,0 @@
-module TraceLensCapture {
-    header "/Users/rodrigo/Projetos/TraceLens/.build/index-build/arm64-apple-macosx/debug/TraceLensCapture.build/include/TraceLensCapture-Swift.h"
-}
