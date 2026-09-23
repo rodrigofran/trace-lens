@@ -109,7 +109,17 @@ struct ShakeToPresentTraceLens: UIViewControllerRepresentable {
 }
 ```
 
-## 5. Apresente o TraceLens a partir da RootView
+## 5. Apresente o TraceLens no handler de shake
+
+Para apps UIKit, não é necessário ter uma `View` SwiftUI nem criar uma apresentação manual. No ponto atual que trata o shake ou monta o menu de debug, chame:
+
+```swift
+TraceLens.shared.show()
+```
+
+O próprio SDK encontra a janela ativa e apresenta a dashboard em tela cheia. A integração com `TraceLensView` abaixo é opcional e serve somente para apps que já usam SwiftUI.
+
+### Alternativa para apps SwiftUI
 
 Envolva a raiz do app com uma apresentação de tela cheia:
 

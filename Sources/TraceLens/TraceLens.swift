@@ -7,6 +7,10 @@ import TraceLensMetrics
 import TraceLensStorage
 import TraceLensUI
 
+#if os(iOS)
+  import UIKit
+#endif
+
 private actor TraceLensCoordinator {
   // MARK: - State
 
@@ -186,6 +190,117 @@ public struct TraceLensObservation: Sendable, Hashable {
   fileprivate let transactionID: UUID
 }
 
+/// UIKit-friendly entry point for presenting the TraceLens dashboard.
+///
+/// Call `TraceLens.shared.show()` from an existing debug menu or shake handler.
+/// The presenter resolves the active application window and presents its own
+/// `UIHostingController`, so the host does not need to use SwiftUI.
+public final class TraceLensPresenter: @unchecked Sendable {
+  public init() {}
+
+  // MARK: - Presentation
+
+  public func show() {
+    #if os(iOS)
+      DispatchQueue.main.async {
+        TraceLensUIKitPresenter.shared.show()
+      }
+    #endif
+  }
+
+  public func hide() {
+    #if os(iOS)
+      DispatchQueue.main.async {
+        TraceLensUIKitPresenter.shared.hide()
+      }
+    #endif
+  }
+
+  #if os(iOS)
+    /// Presents TraceLens from an explicit UIKit controller when one is already available.
+    public func show(from viewController: UIViewController) {
+      DispatchQueue.main.async {
+        TraceLensUIKitPresenter.shared.show(from: viewController)
+      }
+    }
+  #endif
+}
+
+#if os(iOS)
+  @MainActor
+  private final class TraceLensUIKitPresenter {
+    static let shared = TraceLensUIKitPresenter()
+
+    private weak var presentedViewController: UIViewController?
+
+    // MARK: - Presentation
+
+    func show() {
+      guard let rootViewController = activeRootViewController() else {
+        return
+      }
+
+      show(from: rootViewController)
+    }
+
+    func show(from viewController: UIViewController) {
+      guard presentedViewController == nil else {
+        return
+      }
+
+      let presenter = topViewController(from: viewController)
+      let hostingController = UIHostingController(rootView: TraceLensView())
+
+      hostingController.modalPresentationStyle = .fullScreen
+      hostingController.rootView = TraceLensView { [weak self, weak hostingController] in
+        hostingController?.dismiss(animated: true)
+        self?.presentedViewController = nil
+      }
+
+      presentedViewController = hostingController
+      presenter.present(hostingController, animated: true)
+    }
+
+    func hide() {
+      presentedViewController?.dismiss(animated: true)
+      presentedViewController = nil
+    }
+
+    // MARK: - View controller resolution
+
+    private func activeRootViewController() -> UIViewController? {
+      let scenes = UIApplication.shared.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .filter { $0.activationState == .foregroundActive }
+
+      let windows = scenes.flatMap(\.windows)
+
+      return windows.first(where: \.isKeyWindow)?.rootViewController
+        ?? windows.first?.rootViewController
+    }
+
+    private func topViewController(from viewController: UIViewController) -> UIViewController {
+      if let presentedViewController = viewController.presentedViewController {
+        return topViewController(from: presentedViewController)
+      }
+
+      if let navigationController = viewController as? UINavigationController,
+        let visibleViewController = navigationController.visibleViewController
+      {
+        return topViewController(from: visibleViewController)
+      }
+
+      if let tabBarController = viewController as? UITabBarController,
+        let selectedViewController = tabBarController.selectedViewController
+      {
+        return topViewController(from: selectedViewController)
+      }
+
+      return viewController
+    }
+  }
+#endif
+
 @MainActor
 private struct Presentation {
   var store: SessionStore? = nil
@@ -197,6 +312,9 @@ public enum TraceLens {
   // MARK: - Dependencies
 
   private static let coordinator = TraceLensCoordinator()
+
+  /// Shared UIKit-friendly presenter. Call `TraceLens.shared.show()`.
+  public static let shared = TraceLensPresenter()
 
   @MainActor
   fileprivate static var presentation = Presentation()
@@ -223,14 +341,12 @@ public enum TraceLens {
 
   // MARK: - Presentation
 
-  @MainActor
   public static func show() {
-    presentation.visible = true
+    shared.show()
   }
 
-  @MainActor
   public static func hide() {
-    presentation.visible = false
+    shared.hide()
   }
 
   // MARK: - Session

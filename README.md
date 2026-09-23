@@ -1,6 +1,6 @@
 # TraceLens
 
-TraceLens é um pacote Swift para iOS 17+ que observa tráfego HTTP temporariamente dentro do app. Ele foi pensado para desenvolvimento, QA e debug — não para telemetria de produção.
+TraceLens é um pacote Swift para iOS 15+ que observa tráfego HTTP temporariamente dentro do app. Ele foi pensado para desenvolvimento, QA e debug — não para telemetria de produção.
 
 ## Instalação e início
 
@@ -42,7 +42,15 @@ if let observation {
 
 Em caso de erro, registre-o com `await TraceLens.recordFailure(error, for: observation)`. Se o SDCore expuser métricas, use `await TraceLens.recordMetrics(metrics, for: observation)`.
 
-Apresente `TraceLensView` em uma `fullScreenCover`, destino de navegação ou janela de debug. Use `await TraceLens.clearSession()` para limpar a sessão e `try await TraceLens.exportSession()` para exportá-la.
+Para apps UIKit, incluindo menus de shake, basta chamar a API agnóstica de SwiftUI:
+
+```swift
+TraceLens.shared.show()
+```
+
+O SDK encontra a janela ativa e apresenta sua própria tela. Se já tiver um `UIViewController`, também é possível usar `TraceLens.shared.show(from: viewController)`.
+
+`TraceLensView` continua disponível para apps SwiftUI. Use `await TraceLens.clearSession()` para limpar a sessão e `try await TraceLens.exportSession()` para exportá-la.
 
 ## Configurações da tela Settings
 
