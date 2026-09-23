@@ -9,49 +9,96 @@ import TraceLensStorage
   import AppKit
 #endif
 
-@MainActor public final class TraceLensViewModel: ObservableObject {
+@MainActor
+public final class TraceLensViewModel: ObservableObject {
+  // MARK: - Published state
+
   @Published public private(set) var snapshot: SessionSnapshot?
   @Published public var search = ""
   @Published public var method: HTTPMethod?
   @Published public var capture: CaptureLevel?
   @Published public var statusFilter: StatusFilter = .all
   @Published public var settings: TraceLensConfiguration
+
+  // MARK: - Private state
+
   private var task: Task<Void, Never>?
+
+  // MARK: - Initialization
+
   public init(store: SessionStore?, configuration: TraceLensConfiguration = .init()) {
     settings = configuration
-    guard let store else { return }
+
+    guard let store else {
+      return
+    }
+
     task = Task { [weak self] in
       for await value in await store.updates() {
-        if Task.isCancelled { break }
+        if Task.isCancelled {
+          break
+        }
+
         self?.snapshot = value
       }
     }
   }
-  deinit { task?.cancel() }
+
+  deinit {
+    task?.cancel()
+  }
+
+  // MARK: - Derived state
+
   public var transactions: [NetworkTransaction] {
     (snapshot?.transactions ?? []).filter { tx in
       let text = [
-        tx.request.parsed.host, tx.request.parsed.displayService,
-        tx.request.parsed.technicalService, tx.request.parsed.endpoint, tx.request.parsed.fullURL,
-        tx.request.method.rawValue, tx.response.map { String($0.statusCode) },
-      ].compactMap { $0 }.joined(separator: " ").lowercased()
+        tx.request.parsed.host,
+        tx.request.parsed.displayService,
+        tx.request.parsed.technicalService,
+        tx.request.parsed.endpoint,
+        tx.request.parsed.fullURL,
+        tx.request.method.rawValue,
+        tx.response.map { String($0.statusCode) },
+      ]
+      .compactMap { $0 }
+      .joined(separator: " ")
+      .lowercased()
+
       return (search.isEmpty || text.contains(search.lowercased()))
         && (method == nil || method == tx.request.method)
-        && (capture == nil || capture == tx.captureLevel) && statusFilter.matches(tx)
+        && (capture == nil || capture == tx.captureLevel)
+        && statusFilter.matches(tx)
     }
   }
-  public var totalTransactions: Int { snapshot?.transactions.count ?? 0 }
+
+  public var totalTransactions: Int {
+    snapshot?.transactions.count ?? 0
+  }
 }
 
 public enum StatusFilter: String, CaseIterable, Identifiable {
-  case all, errors
-  public var id: String { rawValue }
+  case all
+  case errors
+
+  public var id: String {
+    rawValue
+  }
+
   func matches(_ transaction: NetworkTransaction) -> Bool {
     switch self {
-    case .all: return true
+    case .all:
+      return true
+
     case .errors:
-      if transaction.error != nil { return true }
-      guard let statusCode = transaction.response?.statusCode else { return false }
+      if transaction.error != nil {
+        return true
+      }
+
+      guard let statusCode = transaction.response?.statusCode else {
+        return false
+      }
+
       return statusCode >= 400
     }
   }
@@ -94,15 +141,24 @@ extension HTTPMethod {
 }
 
 public struct TraceLensDashboard: View {
+  // MARK: - State
+
   @StateObject private var model: TraceLensViewModel
+
+  // MARK: - Dependencies
+
   private let store: SessionStore?
   private let configuration: TraceLensConfiguration
   private let onClose: (() -> Void)?
   private let onConfigurationChange: (TraceLensConfiguration) -> Void
   private let onClear: () async -> Void
   private let onExport: () async throws -> URL
+
+  // MARK: - Initialization
+
   public init(
-    store: SessionStore?, configuration: TraceLensConfiguration = .init(),
+    store: SessionStore?,
+    configuration: TraceLensConfiguration = .init(),
     onClose: (() -> Void)? = nil,
     onConfigurationChange: @escaping (TraceLensConfiguration) -> Void = { _ in },
     onClear: @escaping () async -> Void = {},
@@ -114,35 +170,59 @@ public struct TraceLensDashboard: View {
     self.onConfigurationChange = onConfigurationChange
     self.onClear = onClear
     self.onExport = onExport
+
     _model = StateObject(
-      wrappedValue: TraceLensViewModel(store: store, configuration: configuration))
+      wrappedValue: TraceLensViewModel(
+        store: store,
+        configuration: configuration
+      )
+    )
   }
+
+  // MARK: - View
+
   public var body: some View {
     TabView {
-      RequestsScreen(model: model, policy: model.settings.sensitiveDataPolicy, onClose: onClose)
+      RequestsScreen(
+        model: model,
+        policy: model.settings.sensitiveDataPolicy,
+        onClose: onClose
+      )
         .tabItem { Label("Requests", systemImage: "list.bullet.rectangle") }
-      MetricsScreen(model: model, onClose: onClose).tabItem {
+
+      MetricsScreen(model: model, onClose: onClose)
+        .tabItem {
         Label("Métricas", systemImage: "chart.bar")
       }
+
       ScopesScreen(model: model, store: store, onClose: onClose).tabItem {
         Label("Escopos", systemImage: "scope")
       }
+
       SettingsScreen(
-        model: model, onClose: onClose, onConfigurationChange: onConfigurationChange,
-        onClear: onClear, onExport: onExport
-      ).tabItem { Label("Ajustes", systemImage: "gearshape") }
-    }.tint(.green).traceLensBackground()
+        model: model,
+        onClose: onClose,
+        onConfigurationChange: onConfigurationChange,
+        onClear: onClear,
+        onExport: onExport
+      )
+      .tabItem { Label("Ajustes", systemImage: "gearshape") }
+    }
+    .tint(.green)
+    .traceLensBackground()
   }
 }
 
-public enum TraceLensDashboardError: Error { case exportUnavailable }
+public enum TraceLensDashboardError: Error {
+  case exportUnavailable
+}
 
 private struct RequestsScreen: View {
   @ObservedObject var model: TraceLensViewModel
   let policy: SensitiveDataPolicy
   let onClose: (() -> Void)?
   var body: some View {
-    NavigationStack {
+    NavigationView {
       ScrollView {
         LazyVStack(spacing: 12) {
           DashboardHeader(title: "TraceLens", subtitle: "\(model.totalTransactions) requests")
@@ -152,9 +232,7 @@ private struct RequestsScreen: View {
             EmptyRequestsView(hasFilters: hasActiveFilters)
           } else {
             ForEach(model.transactions) { tx in
-              NavigationLink {
-                RequestDetail(transaction: tx, policy: policy)
-              } label: {
+              NavigationLink(destination: RequestDetail(transaction: tx, policy: policy)) {
                 TransactionRow(transaction: tx)
               }
               .buttonStyle(.plain)
@@ -167,6 +245,7 @@ private struct RequestsScreen: View {
       .traceLensInlineNavigationTitle()
       .traceLensCloseToolbar(onClose)
     }
+    .traceLensNavigationStyle()
   }
   private var hasActiveFilters: Bool {
     !model.search.isEmpty || model.method != nil || model.capture != nil
@@ -186,7 +265,14 @@ private struct DashboardHeader: View {
       .font(.title2.weight(.semibold))
       .foregroundStyle(.white)
       .frame(width: 50, height: 50)
-      .background(Color.green.gradient, in: RoundedRectangle(cornerRadius: 16))
+      .background(
+        LinearGradient(
+          colors: [.green, Color.green.opacity(0.72)],
+          startPoint: .topLeading,
+          endPoint: .bottomTrailing
+        ),
+        in: RoundedRectangle(cornerRadius: 16)
+      )
       VStack(alignment: .leading, spacing: 3) {
         Text(title).font(.title.bold())
         Text(subtitle).font(.subheadline).foregroundStyle(.secondary)
@@ -303,15 +389,25 @@ private struct MethodFilterChip: View {
 private struct EmptyRequestsView: View {
   let hasFilters: Bool
   var body: some View {
-    ContentUnavailableView(
-      hasFilters ? "Nenhuma request encontrada" : "Ainda não há requests",
-      systemImage: hasFilters ? "line.3.horizontal.decrease.circle" : "network",
-      description: Text(
+    VStack(spacing: 12) {
+      Image(systemName: hasFilters ? "line.3.horizontal.decrease.circle" : "network")
+        .font(.system(size: 34))
+        .foregroundStyle(.secondary)
+
+      Text(hasFilters ? "Nenhuma request encontrada" : "Ainda não há requests")
+        .font(.headline)
+
+      Text(
         hasFilters
           ? "Ajuste a busca ou os filtros para ver o tráfego capturado."
-          : "As requests de rede observadas nesta sessão aparecerão aqui.")
-    )
+          : "As requests de rede observadas nesta sessão aparecerão aqui."
+      )
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+      .multilineTextAlignment(.center)
+    }
     .padding(.top, 48)
+    .padding(.horizontal, 24)
   }
 }
 
@@ -408,21 +504,23 @@ private struct RequestDetail: View {
   private var overview: some View {
     List {
       Section("Request") {
-        LabeledContent("Serviço", value: transaction.request.parsed.displayService ?? "—")
-        LabeledContent("Serviço técnico", value: transaction.request.parsed.technicalService ?? "—")
-        LabeledContent("Endpoint", value: transaction.request.parsed.endpoint)
-        LabeledContent("Host", value: transaction.request.parsed.host)
-        LabeledContent("Método", value: transaction.request.method.rawValue)
+        DetailValueRow("Serviço", value: transaction.request.parsed.displayService ?? "—")
+        DetailValueRow("Serviço técnico", value: transaction.request.parsed.technicalService ?? "—")
+        DetailValueRow("Endpoint", value: transaction.request.parsed.endpoint)
+        DetailValueRow("Host", value: transaction.request.parsed.host)
+        DetailValueRow("Método", value: transaction.request.method.rawValue)
       }
       Section("URL completa") {
         Text(transaction.request.parsed.fullURL).textSelection(.enabled)
-        ShareLink(item: transaction.request.parsed.fullURL) {
+        Button {
+          copyToPasteboard(transaction.request.parsed.fullURL)
+        } label: {
           Label("Copiar URL", systemImage: "doc.on.doc")
         }
       }
       Section("Status") {
-        LabeledContent("Status", value: transaction.response.map { String($0.statusCode) } ?? "—")
-        LabeledContent("Captura", value: transaction.captureLevel.rawValue.capitalized)
+        DetailValueRow("Status", value: transaction.response.map { String($0.statusCode) } ?? "—")
+        DetailValueRow("Captura", value: transaction.captureLevel.rawValue.capitalized)
       }
     }
   }
@@ -441,7 +539,7 @@ private struct RequestDetail: View {
         Text("Nenhum header disponível").foregroundStyle(.secondary)
       } else {
         ForEach(values.keys.sorted(), id: \.self) { key in
-          LabeledContent(
+          DetailValueRow(
             key, value: SensitiveData.value(values[key] ?? "", key: key, policy: policy))
         }
       }
@@ -481,8 +579,41 @@ private struct RequestDetail: View {
     }
   }
   private func timing(_ name: String, _ value: TimeInterval?) -> some View {
-    LabeledContent(name, value: value.map { String(format: "%.0f ms", $0 * 1000) } ?? "—")
+    DetailValueRow(name, value: value.map { String(format: "%.0f ms", $0 * 1000) } ?? "—")
   }
+}
+
+private struct DetailValueRow: View {
+  let title: String
+  let value: String
+
+  init(_ title: String, value: String) {
+    self.title = title
+    self.value = value
+  }
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 16) {
+      Text(title)
+        .foregroundStyle(.primary)
+
+      Spacer(minLength: 12)
+
+      Text(value)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.trailing)
+        .lineLimit(nil)
+    }
+  }
+}
+
+private func copyToPasteboard(_ value: String) {
+  #if os(iOS) || os(tvOS) || os(visionOS)
+    UIPasteboard.general.string = value
+  #elseif os(macOS)
+    NSPasteboard.general.clearContents()
+    NSPasteboard.general.setString(value, forType: .string)
+  #endif
 }
 
 private struct BodyPreview: View {
@@ -516,7 +647,7 @@ private struct MetricsScreen: View {
   let onClose: (() -> Void)?
   var body: some View {
     let values = MetricsAggregator().aggregate(model.snapshot?.transactions ?? [])
-    NavigationStack {
+    NavigationView {
       ScrollView {
         VStack(alignment: .leading, spacing: 22) {
           DashboardHeader(title: "Métricas", subtitle: "Uma visão clara desta sessão.")
@@ -554,6 +685,7 @@ private struct MetricsScreen: View {
       .traceLensInlineNavigationTitle()
       .traceLensCloseToolbar(onClose)
     }
+    .traceLensNavigationStyle()
   }
 }
 
@@ -579,7 +711,7 @@ private struct ScopesScreen: View {
   let store: SessionStore?
   let onClose: (() -> Void)?
   var body: some View {
-    NavigationStack {
+    NavigationView {
       ScrollView {
         VStack(alignment: .leading, spacing: 22) {
           DashboardHeader(title: "Escopos", subtitle: "Escolha os serviços que serão observados.")
@@ -593,6 +725,7 @@ private struct ScopesScreen: View {
         }.padding(20)
       }.traceLensBackground().traceLensInlineNavigationTitle().traceLensCloseToolbar(onClose)
     }
+    .traceLensNavigationStyle()
   }
 }
 
@@ -605,7 +738,7 @@ private struct SettingsScreen: View {
   @State private var showingClearConfirmation = false
   @State private var toast: String?
   var body: some View {
-    NavigationStack {
+    NavigationView {
       ScrollView {
         VStack(alignment: .leading, spacing: 22) {
           SettingsHeader()
@@ -694,6 +827,7 @@ private struct SettingsScreen: View {
         if let toast { TraceLensToast(message: toast).padding(.top, 10) }
       }
     }
+    .traceLensNavigationStyle()
   }
 
   private var captureName: String { model.settings.defaultCapture.rawValue.capitalized }
@@ -740,7 +874,7 @@ private struct SettingsScreen: View {
   private func showToast(_ message: String) {
     toast = message
     Task {
-      try? await Task.sleep(for: .seconds(2))
+      try? await Task.sleep(nanoseconds: 2_000_000_000)
       if toast == message { toast = nil }
     }
   }
@@ -753,7 +887,14 @@ private struct SettingsHeader: View {
         .font(.title)
         .foregroundStyle(.white)
         .frame(width: 52, height: 52)
-        .background(Color.green.gradient, in: RoundedRectangle(cornerRadius: 16))
+        .background(
+          LinearGradient(
+            colors: [.green, Color.green.opacity(0.72)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+          ),
+          in: RoundedRectangle(cornerRadius: 16)
+        )
       VStack(alignment: .leading, spacing: 2) {
         Text("TraceLens").font(.title.bold())
         Text("Ajustes").font(.title3).foregroundStyle(.secondary)
@@ -949,6 +1090,15 @@ private struct DiscoveredScopeSection: View {
 
 extension View {
   @ViewBuilder
+  fileprivate func traceLensNavigationStyle() -> some View {
+    #if os(iOS)
+      navigationViewStyle(.stack)
+    #else
+      self
+    #endif
+  }
+
+  @ViewBuilder
   fileprivate func traceLensInlineNavigationTitle() -> some View {
     #if os(iOS) || os(tvOS) || os(visionOS)
       navigationBarTitleDisplayMode(.inline)
@@ -970,7 +1120,7 @@ extension View {
       }
     #else
       toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .navigationBarTrailing) {
           if let action {
             Button(action: action) { Image(systemName: "xmark").font(.body.weight(.bold)) }
               .accessibilityLabel("Fechar")

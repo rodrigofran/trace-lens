@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "TraceLens",
-    platforms: [.iOS(.v17), .macOS(.v14)],
+    platforms: [.iOS(.v15), .macOS(.v14)],
     products: [.library(name: "TraceLens", targets: ["TraceLens"])],
     targets: [
         .target(name: "TraceLensCore"),
