@@ -539,19 +539,35 @@ private struct RequestDetail: View {
         Text("Nenhum header disponível").foregroundStyle(.secondary)
       } else {
         ForEach(values.keys.sorted(), id: \.self) { key in
-          DetailValueRow(
-            key, value: SensitiveData.value(values[key] ?? "", key: key, policy: policy))
+          HeaderValueRow(
+            title: key,
+            value: SensitiveData.value(values[key] ?? "", key: key, policy: policy)
+          )
         }
       }
     }
   }
   private var bodyList: some View {
     List {
-      body("Body da request", transaction.request.body)
-      body("Body da response", transaction.response?.body ?? .none)
+      body(
+        "Body da request",
+        transaction.request.body,
+        contentType: contentType(in: transaction.request.headers)
+      )
+      body(
+        "Body da response",
+        transaction.response?.body ?? .none,
+        contentType: transaction.response?.mimeType
+          ?? contentType(in: transaction.response?.headers ?? [:])
+      )
     }
   }
-  private func body(_ title: String, _ reference: BodyReference) -> some View {
+
+  private func body(
+    _ title: String,
+    _ reference: BodyReference,
+    contentType: String?
+  ) -> some View {
     Section(title) {
       if transaction.captureLevel != .full {
         Text("Body não foi capturado. Esta request usou apenas metadata.").foregroundStyle(
@@ -560,7 +576,7 @@ private struct RequestDetail: View {
         Text("Body truncado. O payload original excedeu o limite de captura.").foregroundStyle(
           .secondary)
       } else if let data = reference.data, let text = String(data: data, encoding: .utf8) {
-        BodyPreview(text: text)
+        BodyPreview(text: BodyFormatter.format(data: data, fallback: text, contentType: contentType))
       } else {
         Text("Body indisponível ou armazenado temporariamente.").foregroundStyle(.secondary)
       }
@@ -569,14 +585,85 @@ private struct RequestDetail: View {
   private var metrics: some View {
     List {
       Section("Tempo") {
-        timing("Total", transaction.metrics?.total ?? transaction.duration)
-        timing("DNS", transaction.metrics?.dns)
-        timing("TCP", transaction.metrics?.tcp)
-        timing("TLS", transaction.metrics?.tls)
-        timing("TTFB", transaction.metrics?.firstByte)
-        timing("Download", transaction.metrics?.download)
+        ForEach(timings, id: \.name) { item in
+          timing(item.name, item.value)
+        }
+      }
+
+      if hasTransferDetails {
+        Section("Transferência") {
+          if let requestSize = transaction.request.estimatedSize {
+            DetailValueRow("Body da request", value: byteCount(requestSize))
+          }
+
+          if let response = transaction.response {
+            DetailValueRow("Body da response", value: byteCount(response.capturedSize))
+
+            if let expectedContentLength = response.expectedContentLength,
+              expectedContentLength >= 0
+            {
+              DetailValueRow(
+                "Tamanho informado",
+                value: byteCount(Int(expectedContentLength))
+              )
+            }
+          }
+        }
+      }
+
+      if hasConnectionDetails {
+        Section("Conexão") {
+          if let protocolName = transaction.metrics?.protocolName {
+            DetailValueRow("Protocolo", value: protocolName)
+          }
+
+          if let reusedConnection = transaction.metrics?.reusedConnection {
+            DetailValueRow("Conexão reutilizada", value: reusedConnection ? "Sim" : "Não")
+          }
+
+          if let redirects = transaction.metrics?.redirectCount, redirects > 0 {
+            DetailValueRow("Redirecionamentos", value: String(redirects))
+          }
+        }
       }
     }
+  }
+
+  private var timings: [(name: String, value: TimeInterval)] {
+    [
+      ("Total", transaction.metrics?.total ?? transaction.duration),
+      ("DNS", transaction.metrics?.dns),
+      ("TCP", transaction.metrics?.tcp),
+      ("TLS", transaction.metrics?.tls),
+      ("Upload", transaction.metrics?.upload),
+      ("TTFB", transaction.metrics?.firstByte),
+      ("Download", transaction.metrics?.download),
+    ]
+    .compactMap { name, value in
+      value.map { (name: name, value: $0) }
+    }
+  }
+
+  private var hasTransferDetails: Bool {
+    transaction.request.estimatedSize != nil || transaction.response != nil
+  }
+
+  private var hasConnectionDetails: Bool {
+    let metrics = transaction.metrics
+
+    return metrics?.protocolName != nil
+      || metrics?.reusedConnection != nil
+      || (metrics?.redirectCount ?? 0) > 0
+  }
+
+  private func byteCount(_ value: Int) -> String {
+    ByteCountFormatter.string(fromByteCount: Int64(value), countStyle: .file)
+  }
+
+  private func contentType(in headers: [String: String]) -> String? {
+    headers.first { key, _ in
+      key.caseInsensitiveCompare("Content-Type") == .orderedSame
+    }?.value
   }
   private func timing(_ name: String, _ value: TimeInterval?) -> some View {
     DetailValueRow(name, value: value.map { String(format: "%.0f ms", $0 * 1000) } ?? "—")
@@ -604,6 +691,26 @@ private struct DetailValueRow: View {
         .multilineTextAlignment(.trailing)
         .lineLimit(nil)
     }
+  }
+}
+
+private struct HeaderValueRow: View {
+  let title: String
+  let value: String
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text(title)
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
+
+      Text(value)
+        .font(.system(.body, design: .monospaced))
+        .foregroundStyle(.primary)
+        .textSelection(.enabled)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .padding(.vertical, 4)
   }
 }
 
@@ -642,6 +749,96 @@ private struct BodyPreview: View {
   }
 }
 
+private enum BodyFormatter {
+  static func format(data: Data, fallback: String, contentType: String?) -> String {
+    if isJSON(contentType),
+      let object = try? JSONSerialization.jsonObject(with: data),
+      let formatted = try? JSONSerialization.data(
+        withJSONObject: object,
+        options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+      ),
+      let text = String(data: formatted, encoding: .utf8)
+    {
+      return text
+    }
+
+    if isMarkup(contentType) || fallback.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("<") {
+      return prettyMarkup(fallback)
+    }
+
+    return fallback
+  }
+
+  private static func isJSON(_ contentType: String?) -> Bool {
+    guard let contentType = contentType?.lowercased() else {
+      return true
+    }
+
+    return contentType.contains("json") || contentType.hasSuffix("+json")
+  }
+
+  private static func isMarkup(_ contentType: String?) -> Bool {
+    guard let contentType = contentType?.lowercased() else {
+      return false
+    }
+
+    return contentType.contains("xml") || contentType.contains("html")
+  }
+
+  private static func prettyMarkup(_ source: String) -> String {
+    let voidElements: Set<String> = [
+      "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source",
+      "track", "wbr",
+    ]
+    var result: [String] = []
+    var remaining = source.trimmingCharacters(in: .whitespacesAndNewlines)[...]
+    var indentation = 0
+
+    while let opening = remaining.firstIndex(of: "<") {
+      let text = remaining[..<opening].trimmingCharacters(in: .whitespacesAndNewlines)
+
+      if !text.isEmpty {
+        result.append(String(repeating: "  ", count: indentation) + text)
+      }
+
+      guard let closing = remaining[opening...].firstIndex(of: ">") else {
+        result.append(String(repeating: "  ", count: indentation) + remaining[opening...])
+        remaining = ""
+        break
+      }
+
+      let tag = String(remaining[opening...closing])
+      let normalized = tag.lowercased()
+      let tagName = normalized
+        .drop(while: { $0 == "<" || $0 == "/" || $0 == "!" || $0 == "?" })
+        .prefix { !$0.isWhitespace && $0 != ">" && $0 != "/" }
+      let isClosing = normalized.hasPrefix("</")
+      let isSelfClosing = normalized.hasSuffix("/>") || voidElements.contains(String(tagName))
+      let isDeclaration = normalized.hasPrefix("<?") || normalized.hasPrefix("<!")
+
+      if isClosing {
+        indentation = max(0, indentation - 1)
+      }
+
+      result.append(String(repeating: "  ", count: indentation) + tag)
+
+      if !isClosing && !isSelfClosing && !isDeclaration {
+        indentation += 1
+      }
+
+      remaining = remaining[remaining.index(after: closing)...]
+    }
+
+    let trailing = remaining.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if !trailing.isEmpty {
+      result.append(String(repeating: "  ", count: indentation) + trailing)
+    }
+
+    return result.isEmpty ? source : result.joined(separator: "\n")
+  }
+}
+
 private struct MetricsScreen: View {
   @ObservedObject var model: TraceLensViewModel
   let onClose: (() -> Void)?
@@ -673,9 +870,9 @@ private struct MetricsScreen: View {
                     .secondary)
                 }
                 Spacer()
-                Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(
-                  .tertiary)
-              }.padding(12).background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+              }
+              .padding(12)
+              .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
             }
           }
         }
@@ -710,22 +907,43 @@ private struct ScopesScreen: View {
   @ObservedObject var model: TraceLensViewModel
   let store: SessionStore?
   let onClose: (() -> Void)?
+
   var body: some View {
+    let configuredRules = model.snapshot?.configuredRules ?? []
+    let sessionRules = model.snapshot?.sessionRules ?? []
+
     NavigationView {
       ScrollView {
         VStack(alignment: .leading, spacing: 22) {
           DashboardHeader(title: "Escopos", subtitle: "Escolha os serviços que serão observados.")
           ScopeSection(
             title: "Configurados", icon: "checkmark.shield",
-            rules: model.snapshot?.configuredRules ?? [], store: store, removable: false)
+            rules: configuredRules, store: store, removable: false)
           ScopeSection(
             title: "Sessão", icon: "clock.badge.checkmark",
-            rules: model.snapshot?.sessionRules ?? [], store: store, removable: true)
-          DiscoveredScopeSection(hosts: model.snapshot?.discoveredHosts ?? [], store: store)
+            rules: sessionRules, store: store, removable: true)
+          DiscoveredScopeSection(
+            hosts: discoveredHosts(
+              from: model.snapshot?.discoveredHosts ?? [],
+              excluding: configuredRules + sessionRules
+            ),
+            store: store
+          )
         }.padding(20)
       }.traceLensBackground().traceLensInlineNavigationTitle().traceLensCloseToolbar(onClose)
     }
     .traceLensNavigationStyle()
+  }
+
+  private func discoveredHosts(
+    from hosts: [String],
+    excluding rules: [ObservationRule]
+  ) -> [String] {
+    let configuredHosts = Set(
+      rules.compactMap(\.matcher.host).map { $0.lowercased() }
+    )
+
+    return hosts.filter { !configuredHosts.contains($0.lowercased()) }
   }
 }
 
@@ -790,8 +1008,15 @@ private struct SettingsScreen: View {
                 showingClearConfirmation = true
               } label: {
                 SettingsValueRow(
-                  icon: "trash", title: "Limpar sessão", value: "", tint: .red, isDestructive: true)
+                  icon: "trash",
+                  title: "Limpar sessão",
+                  value: "",
+                  tint: .red,
+                  isDestructive: true,
+                  showsDivider: false
+                )
               }
+              .buttonStyle(.plain)
             }
             if controls.exportSession {
               Button {
@@ -802,8 +1027,14 @@ private struct SettingsScreen: View {
                   } catch { showToast("Não foi possível exportar a sessão") }
                 }
               } label: {
-                SettingsValueRow(icon: "square.and.arrow.up", title: "Exportar sessão", value: "")
+                SettingsValueRow(
+                  icon: "square.and.arrow.up",
+                  title: "Exportar sessão",
+                  value: "",
+                  showsDivider: false
+                )
               }
+              .buttonStyle(.plain)
             }
           }
         }
@@ -970,6 +1201,8 @@ private struct SettingsValueRow: View {
   var tint: Color = .green
   var isDestructive = false
   var showsDisclosure = false
+  var showsDivider = true
+
   var body: some View {
     HStack(spacing: 14) {
       SettingsRowIcon(name: icon, tint: tint)
@@ -979,7 +1212,10 @@ private struct SettingsValueRow: View {
       if showsDisclosure {
         Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.tertiary)
       }
-    }.padding(.horizontal, 14).padding(.vertical, 10).settingsDivider()
+    }
+    .padding(.horizontal, 14)
+    .padding(.vertical, 10)
+    .settingsDivider(showsDivider)
   }
 }
 
@@ -1142,8 +1378,11 @@ extension View {
   }
 
   @ViewBuilder
-  fileprivate func settingsDivider() -> some View {
-    self
-      .overlay(alignment: .bottom) { Divider().padding(.leading, 76) }
+  fileprivate func settingsDivider(_ visible: Bool = true) -> some View {
+    if visible {
+      self.overlay(alignment: .bottom) { Divider().padding(.leading, 76) }
+    } else {
+      self
+    }
   }
 }
