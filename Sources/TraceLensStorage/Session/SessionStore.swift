@@ -1,29 +1,20 @@
 import Foundation
 import TraceLensCore
 
-public struct SessionSnapshot: Sendable {
-  public let session: TraceLensSession
-  public let transactions: [NetworkTransaction]
-  public let configuredRules: [ObservationRule]
-  public let sessionRules: [ObservationRule]
-  public let nextRules: [ObservationRule]
-  public let discoveredHosts: [String]
-}
-
 public actor SessionStore {
-  // MARK: - Session state
+  // MARK: - Session State
 
   private var session: TraceLensSession
   private var transactions: [UUID: NetworkTransaction] = [:]
   private var order: [UUID] = []
 
-  // MARK: - Observation rules
+  // MARK: - Observation Rules
 
   private var configuredRules: [ObservationRule]
   private var sessionRules: [ObservationRule] = []
   private var nextRules: [ObservationRule] = []
 
-  // MARK: - Storage state
+  // MARK: - Storage State
 
   private var hosts: Set<String> = []
   private var limits: SessionLimits
@@ -52,9 +43,11 @@ public actor SessionStore {
 
   public func updates() -> AsyncStream<SessionSnapshot> {
     let token = UUID()
+
     return AsyncStream { continuation in
       continuations[token] = continuation
       continuation.yield(snapshot())
+
       continuation.onTermination = { @Sendable _ in
         Task {
           await self.removeContinuation(token)
@@ -63,7 +56,7 @@ public actor SessionStore {
     }
   }
 
-  // MARK: - Transactions
+  // MARK: - Private Methods
 
   private func removeContinuation(_ token: UUID) {
     continuations[token] = nil
@@ -77,9 +70,13 @@ public actor SessionStore {
     }
   }
 
-  public func resolve(url: URL, method: HTTPMethod, defaultCapture: CaptureLevel) -> (
-    CaptureLevel, UUID?
-  ) {
+  // MARK: - Transactions
+
+  public func resolve(
+    url: URL,
+    method: HTTPMethod,
+    defaultCapture: CaptureLevel
+  ) -> (CaptureLevel, UUID?) {
     let engine = ObservationRuleEngine()
 
     let matching = engine.resolve(
@@ -95,8 +92,10 @@ public actor SessionStore {
       nextRules.removeAll { $0.id == matching.id }
       publish()
     }
+
     return (matching?.captureLevel ?? defaultCapture, matching?.id)
   }
+
   @discardableResult
   public func begin(_ transaction: NetworkTransaction) -> Bool {
     guard transactions.count < limits.maxTransactions else {
@@ -147,7 +146,7 @@ public actor SessionStore {
     publish()
   }
 
-  // MARK: - Limits and cleanup
+  // MARK: - Limits and Cleanup
 
   public func updateLimits(_ limits: SessionLimits) {
     self.limits = limits

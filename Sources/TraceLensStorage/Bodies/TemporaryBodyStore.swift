@@ -30,7 +30,7 @@ public actor TemporaryBodyStore {
       withIntermediateDirectories: true)
   }
 
-  // MARK: - Body storage
+  // MARK: - Body Storage
 
   public func store(_ data: Data, kind: String) -> BodyReference {
     guard data.count <= limits.maxBodyBytes,
@@ -42,6 +42,7 @@ public actor TemporaryBodyStore {
     if data.count <= 64 * 1_024 {
       return .init(storage: .inline, data: data, originalSize: data.count)
     }
+
     let name = "\(kind)-\(UUID().uuidString).body"
     let directory = kind == "request" ? "requests" : "responses"
     let url =
@@ -61,19 +62,21 @@ public actor TemporaryBodyStore {
 
   public func data(for reference: BodyReference) -> Data? {
     switch reference.storage {
-    case .inline: return reference.data
+    case .inline:
+      return reference.data
+
     case .file:
       guard let path = reference.fileName else {
         return nil
       }
 
       return try? Data(contentsOf: URL(fileURLWithPath: path))
-    default:
+    case .none, .truncated:
       return nil
     }
   }
 
-  // MARK: - Session cleanup
+  // MARK: - Session Cleanup
 
   public func byteCount() -> Int64 {
     storedBytes
