@@ -6,8 +6,10 @@ struct SettingsScreen: View {
   let onClose: (() -> Void)?
   let onConfigurationChange: (TraceLensConfiguration) -> Void
   let onClear: () async -> Void
-  let onExport: () async throws -> URL
+  let onExport: (TraceLensExportFormat) async throws -> URL
   @State private var showingClearConfirmation = false
+  @State private var showingExportOptions = false
+  @State private var shareFile: TraceLensShareFile?
   @State private var toast: String?
   var body: some View {
     NavigationView {
@@ -74,12 +76,7 @@ struct SettingsScreen: View {
             }
             if controls.exportSession {
               Button {
-                Task {
-                  do {
-                    _ = try await onExport()
-                    showToast("Sessão exportada")
-                  } catch { showToast("Não foi possível exportar a sessão") }
-                }
+                showingExportOptions = true
               } label: {
                 SettingsValueRow(
                   icon: "square.and.arrow.up",
@@ -110,6 +107,24 @@ struct SettingsScreen: View {
       }
       .overlay(alignment: .top) {
         if let toast { TraceLensToast(message: toast).padding(.top, 10) }
+      }
+      .sheet(item: $shareFile) { file in
+        TraceLensShareSheet(file: file) {
+          shareFile = nil
+        }
+      }
+      .confirmationDialog(
+        "Exportar sessão",
+        isPresented: $showingExportOptions,
+        titleVisibility: .visible
+      ) {
+        Button("TXT — leitura rápida") {
+          exportSession(format: .text)
+        }
+
+        Button("JSON — debug técnico") {
+          exportSession(format: .json)
+        }
       }
     }
     .traceLensNavigationStyle()
@@ -161,6 +176,16 @@ struct SettingsScreen: View {
     Task {
       try? await Task.sleep(nanoseconds: 2_000_000_000)
       if toast == message { toast = nil }
+    }
+  }
+
+  private func exportSession(format: TraceLensExportFormat) {
+    Task {
+      do {
+        shareFile = try await .init(url: onExport(format))
+      } catch {
+        showToast("Não foi possível exportar a sessão")
+      }
     }
   }
 }

@@ -8,6 +8,7 @@ struct RequestsScreen: View {
 
   let policy: SensitiveDataPolicy
   let onClose: (() -> Void)?
+  let onExportTransaction: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
 
   // MARK: - View
 
@@ -19,11 +20,27 @@ struct RequestsScreen: View {
           RequestSearchBar(text: $model.search)
           RequestFilterBar(model: model)
 
+          HStack {
+            Text("Ordenar por")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+
+            Spacer()
+
+            RequestSortMenu(model: model)
+          }
+
           if model.transactions.isEmpty {
             EmptyRequestsView(hasFilters: hasActiveFilters)
           } else {
             ForEach(model.transactions) { transaction in
-              NavigationLink(destination: RequestDetail(transaction: transaction, policy: policy)) {
+              NavigationLink(
+                destination: RequestDetail(
+                  transaction: transaction,
+                  policy: policy,
+                  onExport: onExportTransaction
+                )
+              ) {
                 TransactionRow(transaction: transaction)
               }
               .buttonStyle(.plain)

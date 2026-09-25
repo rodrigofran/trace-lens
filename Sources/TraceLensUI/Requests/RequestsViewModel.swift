@@ -18,6 +18,7 @@ public final class TraceLensViewModel: ObservableObject {
   @Published public var method: HTTPMethod?
   @Published public var capture: CaptureLevel?
   @Published public var statusFilter: StatusFilter = .all
+  @Published public var sortOrder: RequestSortOrder = .newestFirst
   @Published public var settings: TraceLensConfiguration
 
   // MARK: - Private state
@@ -51,7 +52,7 @@ public final class TraceLensViewModel: ObservableObject {
   // MARK: - Derived state
 
   public var transactions: [NetworkTransaction] {
-    (snapshot?.transactions ?? []).filter { tx in
+    let filtered = (snapshot?.transactions ?? []).filter { tx in
       let text = [
         tx.request.parsed.host,
         tx.request.parsed.displayService,
@@ -70,10 +71,47 @@ public final class TraceLensViewModel: ObservableObject {
         && (capture == nil || capture == tx.captureLevel)
         && statusFilter.matches(tx)
     }
+
+    return filtered.sorted { first, second in
+      switch sortOrder {
+      case .newestFirst:
+        first.startedAt > second.startedAt
+
+      case .oldestFirst:
+        first.startedAt < second.startedAt
+      }
+    }
   }
 
   public var totalTransactions: Int {
     snapshot?.transactions.count ?? 0
+  }
+}
+
+public enum RequestSortOrder: String, CaseIterable, Identifiable {
+  case newestFirst
+  case oldestFirst
+
+  public var id: Self {
+    self
+  }
+
+  var title: String {
+    switch self {
+    case .newestFirst:
+      "Mais recentes"
+    case .oldestFirst:
+      "Mais antigas"
+    }
+  }
+
+  var icon: String {
+    switch self {
+    case .newestFirst:
+      "arrow.down"
+    case .oldestFirst:
+      "arrow.up"
+    }
   }
 }
 

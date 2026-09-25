@@ -42,6 +42,8 @@ struct RequestBodyView: View {
         let text = String(data: data, encoding: .utf8)
       {
         BodyPreview(text: BodyFormatter.format(data: data, fallback: text, contentType: contentType))
+          .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+          .listRowBackground(Color.clear)
       } else {
         Text("Body indisponível ou armazenado temporariamente.")
           .foregroundStyle(.secondary)

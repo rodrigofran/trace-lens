@@ -80,16 +80,27 @@ actor TraceLensCoordinator {
 
   // MARK: - Export
 
-  func export() async throws -> URL {
+  func export(format: TraceLensExportFormat) async throws -> URL {
     guard let store else {
       throw TraceLensError.notStarted
     }
 
     let snapshot = await store.snapshot()
 
-    return try SessionExporter.export(
+    return try await SessionExporter.exportSession(
       snapshot: snapshot,
-      configuration: configuration
+      configuration: configuration,
+      bodies: bodies,
+      format: format
+    )
+  }
+
+  func export(transaction: NetworkTransaction, format: TraceLensExportFormat) async throws -> URL {
+    try await SessionExporter.exportTransaction(
+      transaction,
+      configuration: configuration,
+      bodies: bodies,
+      format: format
     )
   }
 

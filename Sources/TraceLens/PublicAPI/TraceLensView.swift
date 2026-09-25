@@ -25,7 +25,8 @@ public struct TraceLensView: View {
       onClose: onClose,
       onConfigurationChange: TraceLens.updateConfiguration,
       onClear: TraceLens.clearSession,
-      onExport: TraceLens.exportSession
+      onExport: TraceLens.exportSession,
+      onExportTransaction: TraceLens.exportTransaction
     )
   }
 }

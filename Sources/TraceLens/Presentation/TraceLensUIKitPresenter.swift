@@ -3,7 +3,7 @@
   import UIKit
 
   @MainActor
-  final class TraceLensUIKitPresenter {
+  final class TraceLensUIKitPresenter: NSObject, UIAdaptivePresentationControllerDelegate {
     // MARK: - Shared Instance
 
     static let shared = TraceLensUIKitPresenter()
@@ -29,8 +29,13 @@
 
       let presenter = topViewController(from: viewController)
       let hostingController = UIHostingController(rootView: TraceLensView())
+      let isPresentedOverSheet = presenter.presentationController is UISheetPresentationController
 
-      hostingController.modalPresentationStyle = .fullScreen
+      configurePresentation(
+        for: hostingController,
+        presentedOverSheet: isPresentedOverSheet
+      )
+      hostingController.presentationController?.delegate = self
       hostingController.rootView = TraceLensView { [weak self, weak hostingController] in
         hostingController?.dismiss(animated: true)
         self?.presentedViewController = nil
@@ -43,6 +48,27 @@
     func hide() {
       presentedViewController?.dismiss(animated: true)
       presentedViewController = nil
+    }
+
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+      presentedViewController = nil
+    }
+
+    // MARK: - Private Methods
+
+    private func configurePresentation(
+      for hostingController: UIViewController,
+      presentedOverSheet: Bool
+    ) {
+      guard !presentedOverSheet else {
+        hostingController.modalPresentationStyle = .overFullScreen
+        return
+      }
+
+      hostingController.modalPresentationStyle = .pageSheet
+      hostingController.sheetPresentationController?.detents = [.large()]
+      hostingController.sheetPresentationController?.prefersGrabberVisible = true
+      hostingController.sheetPresentationController?.prefersScrollingExpandsWhenScrolledToEdge = false
     }
 
     // MARK: - View Controller Resolution

@@ -50,7 +50,16 @@ TraceLens.shared.show()
 
 O SDK encontra a janela ativa e apresenta sua própria tela. Se já tiver um `UIViewController`, também é possível usar `TraceLens.shared.show(from: viewController)`.
 
-`TraceLensView` continua disponível para apps SwiftUI. Use `await TraceLens.clearSession()` para limpar a sessão e `try await TraceLens.exportSession()` para exportá-la.
+`TraceLensView` continua disponível para apps SwiftUI. Use `await TraceLens.clearSession()` para limpar a sessão. As exportações retornam uma URL temporária pronta para um share sheet nativo:
+
+```swift
+let sessionJSON = try await TraceLens.exportSession(format: .json)
+let sessionTXT = try await TraceLens.exportSession(format: .text)
+let requestJSON = try await TraceLens.exportTransaction(transaction, format: .json)
+let requestTXT = try await TraceLens.exportTransaction(transaction, format: .text)
+```
+
+O formato JSON preserva a estrutura completa para debug técnico. TXT gera um relatório de leitura rápida, com request, response, headers, bodies e métricas organizados em texto.
 
 ## Configurações da tela Settings
 
@@ -81,7 +90,7 @@ As regras configuradas ficam no código do app hospedeiro. A aba Escopos pode cr
 
 A prioridade é: próxima request, sessão, regra configurada e, por último, captura padrão. Dentro da mesma origem, a regra mais específica vence.
 
-A política padrão é `.redacted`: ela mascara headers sensíveis na interface, no comando cURL e na exportação. Use `.visible` apenas em ambientes de debug aprovados.
+A política padrão é `.redacted`: ela mascara headers sensíveis na interface, no comando cURL e na exportação. Bodies completos são exportados exatamente como foram capturados; por isso, habilite `Detalhes completos` apenas em ambientes de debug aprovados.
 
 `Detalhes completos` captura headers e body de request/response. `Metadata` mantém URL, método, status e duração. Recomenda-se usar `Metadata` como padrão e `Detalhes completos` apenas em hosts seguros durante uma investigação.
 

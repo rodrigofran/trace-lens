@@ -14,7 +14,8 @@ public struct TraceLensDashboard: View {
   private let onClose: (() -> Void)?
   private let onConfigurationChange: (TraceLensConfiguration) -> Void
   private let onClear: () async -> Void
-  private let onExport: () async throws -> URL
+  private let onExport: (TraceLensExportFormat) async throws -> URL
+  private let onExportTransaction: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
 
   // MARK: - Initialization
 
@@ -24,7 +25,12 @@ public struct TraceLensDashboard: View {
     onClose: (() -> Void)? = nil,
     onConfigurationChange: @escaping (TraceLensConfiguration) -> Void = { _ in },
     onClear: @escaping () async -> Void = {},
-    onExport: @escaping () async throws -> URL = { throw TraceLensDashboardError.exportUnavailable }
+    onExport: @escaping (TraceLensExportFormat) async throws -> URL = { _ in
+      throw TraceLensDashboardError.exportUnavailable
+    },
+    onExportTransaction: @escaping (NetworkTransaction, TraceLensExportFormat) async throws -> URL = {
+      _, _ in throw TraceLensDashboardError.exportUnavailable
+    }
   ) {
     self.store = store
     self.configuration = configuration
@@ -32,6 +38,7 @@ public struct TraceLensDashboard: View {
     self.onConfigurationChange = onConfigurationChange
     self.onClear = onClear
     self.onExport = onExport
+    self.onExportTransaction = onExportTransaction
 
     _model = StateObject(
       wrappedValue: TraceLensViewModel(
@@ -48,7 +55,8 @@ public struct TraceLensDashboard: View {
       RequestsScreen(
         model: model,
         policy: model.settings.sensitiveDataPolicy,
-        onClose: onClose
+        onClose: onClose,
+        onExportTransaction: onExportTransaction
       )
         .tabItem { Label("Requests", systemImage: "list.bullet.rectangle") }
 

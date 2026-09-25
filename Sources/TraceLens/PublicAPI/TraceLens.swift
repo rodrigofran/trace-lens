@@ -50,8 +50,20 @@ public enum TraceLens {
     await coordinator.clear()
   }
 
-  public static func exportSession() async throws -> URL {
-    try await coordinator.export()
+  public static func exportSession(
+    format: TraceLensExportFormat = .json
+  ) async throws -> URL {
+    try await coordinator.export(format: format)
+  }
+
+  /// Exports the captured content of one request to a temporary JSON file.
+  ///
+  /// The returned URL is suitable for presenting with a system share sheet.
+  public static func exportTransaction(
+    _ transaction: NetworkTransaction,
+    format: TraceLensExportFormat = .json
+  ) async throws -> URL {
+    try await coordinator.export(transaction: transaction, format: format)
   }
 
   // MARK: - Passive Observation
