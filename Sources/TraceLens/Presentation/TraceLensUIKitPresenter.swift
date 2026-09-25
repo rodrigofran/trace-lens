@@ -28,7 +28,13 @@
       }
 
       let presenter = topViewController(from: viewController)
-      let hostingController = UIHostingController(rootView: TraceLensView())
+      let hostingController = UIHostingController(
+        rootView: AnyView(
+          TraceLensLoadingView { [weak self] in
+            self?.hide()
+          }
+        )
+      )
       let isPresentedOverSheet = presenter.presentationController is UISheetPresentationController
 
       configurePresentation(
@@ -36,13 +42,11 @@
         presentedOverSheet: isPresentedOverSheet
       )
       hostingController.presentationController?.delegate = self
-      hostingController.rootView = TraceLensView { [weak self, weak hostingController] in
-        hostingController?.dismiss(animated: true)
-        self?.presentedViewController = nil
-      }
 
       presentedViewController = hostingController
-      presenter.present(hostingController, animated: true)
+      presenter.present(hostingController, animated: true) { [weak self, weak hostingController] in
+        self?.showDashboard(in: hostingController)
+      }
     }
 
     func hide() {
@@ -69,6 +73,24 @@
       hostingController.sheetPresentationController?.detents = [.large()]
       hostingController.sheetPresentationController?.prefersGrabberVisible = true
       hostingController.sheetPresentationController?.prefersScrollingExpandsWhenScrolledToEdge = false
+    }
+
+    private func showDashboard(in hostingController: UIHostingController<AnyView>?) {
+      DispatchQueue.main.async { [weak self, weak hostingController] in
+        guard let self,
+          let hostingController,
+          self.presentedViewController === hostingController
+        else {
+          return
+        }
+
+        hostingController.rootView = AnyView(
+          TraceLensView { [weak self, weak hostingController] in
+            hostingController?.dismiss(animated: true)
+            self?.presentedViewController = nil
+          }
+        )
+      }
     }
 
     // MARK: - View Controller Resolution
