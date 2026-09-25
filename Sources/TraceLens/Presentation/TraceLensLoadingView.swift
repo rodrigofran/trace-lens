@@ -8,19 +8,9 @@ struct TraceLensLoadingView: View {
   // MARK: - View
 
   var body: some View {
-    ZStack(alignment: .topTrailing) {
+    ZStack {
       Color.black.opacity(0.035)
         .ignoresSafeArea()
-
-      Button(action: onClose) {
-        Image(systemName: "xmark")
-          .font(.headline.weight(.bold))
-          .foregroundStyle(.primary)
-          .frame(width: 44, height: 44)
-          .background(.ultraThinMaterial, in: Circle())
-      }
-      .padding(.top, 16)
-      .padding(.trailing, 20)
 
       VStack(spacing: 16) {
         Image(systemName: "cube.transparent.fill")
@@ -39,6 +29,18 @@ struct TraceLensLoadingView: View {
           .font(.subheadline)
           .foregroundStyle(.secondary)
       }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    .overlay(alignment: .topTrailing) {
+      Button(action: onClose) {
+        Image(systemName: "xmark")
+          .font(.headline.weight(.bold))
+          .foregroundStyle(.primary)
+          .frame(width: 44, height: 44)
+          .background(.ultraThinMaterial, in: Circle())
+      }
+      .padding(.top, 16)
+      .padding(.trailing, 20)
     }
   }
 }
