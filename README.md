@@ -11,11 +11,17 @@ import TraceLens
 
 TraceLens.start(configuration: .init(
     defaultCapture: .metadata,
-    configuredScopes: [.host("api.exemplo.com", capture: .full)],
+    configuredScopes: [.host("api.exemplo.com/v1", capture: .full)],
     endpointPresentation: .serviceAfterPathPrefix("/api/v2"),
     serviceAliases: ["payments": "Pagamentos"]
 ))
 ```
+
+`ObservationRule.host` aceita tanto apenas o domínio quanto uma URL-base. Quando houver
+um caminho após o domínio, ele passa a fazer parte do escopo: por exemplo,
+`api.uat.sicredi.io/v1/` captura somente requests cujo host seja
+`api.uat.sicredi.io` e cujo path comece em `/v1`. Também são aceitos valores com
+scheme, como `https://api.uat.sicredi.io/v1/`.
 
 Para stacks simples, sem `URLSessionDelegate` customizado ou SSL Pinning, é possível instrumentar a configuração antes de criar a `URLSession`:
 

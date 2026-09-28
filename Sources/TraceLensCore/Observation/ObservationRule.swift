@@ -29,6 +29,47 @@ public struct ObservationRule: Sendable, Codable, Equatable, Identifiable {
     capture: CaptureLevel,
     origin: ObservationRuleOrigin = .configured
   ) -> Self {
-    .init(matcher: .init(host: host), captureLevel: capture, origin: origin)
+    let scope = ScopeAddress(host)
+
+    return .init(
+      matcher: .init(host: scope.host, pathPrefix: scope.pathPrefix),
+      captureLevel: capture,
+      origin: origin
+    )
+  }
+}
+
+// MARK: - Scope Address
+
+private struct ScopeAddress {
+  // MARK: - Properties
+
+  let host: String
+  let pathPrefix: String?
+
+  // MARK: - Initialization
+
+  init(_ value: String) {
+    let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+    let urlValue = trimmedValue.contains("://")
+      ? trimmedValue
+      : "https://\(trimmedValue)"
+    let components = URLComponents(string: urlValue)
+
+    host = components?.host ?? trimmedValue
+    pathPrefix = Self.normalizedPathPrefix(components?.path)
+  }
+
+  // MARK: - Private Methods
+
+  private static func normalizedPathPrefix(_ path: String?) -> String? {
+    guard let path, !path.isEmpty, path != "/" else {
+      return nil
+    }
+
+    let prefix = path.hasPrefix("/") ? path : "/\(path)"
+    let trimmedPrefix = prefix.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+
+    return trimmedPrefix.isEmpty ? nil : "/\(trimmedPrefix)"
   }
 }

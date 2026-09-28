@@ -8,39 +8,70 @@ struct TraceLensLoadingView: View {
   // MARK: - View
 
   var body: some View {
-    ZStack {
-      Color.black.opacity(0.035)
-        .ignoresSafeArea()
+    NavigationView {
+      ZStack {
+        Color.black.opacity(0.035)
+          .ignoresSafeArea()
 
-      VStack(spacing: 16) {
-        Image(systemName: "cube.transparent.fill")
-          .font(.system(size: 38, weight: .medium))
-          .foregroundStyle(.white)
-          .frame(width: 76, height: 76)
-          .background(.green, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        VStack(spacing: 16) {
+          Image(systemName: "cube.transparent.fill")
+            .font(.system(size: 38, weight: .medium))
+            .foregroundStyle(.white)
+            .frame(width: 76, height: 76)
+            .background(.green, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
 
-        Text("TraceLens")
-          .font(.title.bold())
+          Text("TraceLens")
+            .font(.title.bold())
 
-        ProgressView()
-          .tint(.green)
+          ProgressView()
+            .tint(.green)
 
-        Text("Carregando sessão...")
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+          Text("Carregando sessão...")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    .overlay(alignment: .topTrailing) {
-      Button(action: onClose) {
-        Image(systemName: "xmark")
-          .font(.headline.weight(.bold))
-          .foregroundStyle(.primary)
-          .frame(width: 44, height: 44)
-          .background(.ultraThinMaterial, in: Circle())
+      .toolbar {
+        closeToolbarItem
       }
-      .padding(.top, 16)
-      .padding(.trailing, 20)
     }
+    .loadingNavigationStyle()
+  }
+
+  // MARK: - Toolbar
+
+  @ToolbarContentBuilder
+  private var closeToolbarItem: some ToolbarContent {
+    #if os(macOS)
+      ToolbarItem {
+        closeButton
+      }
+    #else
+      ToolbarItem(placement: .navigationBarTrailing) {
+        closeButton
+      }
+    #endif
+  }
+
+  private var closeButton: some View {
+    Button(action: onClose) {
+      Image(systemName: "xmark")
+        .font(.body.weight(.bold))
+    }
+    .accessibilityLabel("Fechar")
+  }
+}
+
+// MARK: - Navigation Style
+
+private extension View {
+  @ViewBuilder
+  func loadingNavigationStyle() -> some View {
+    #if os(iOS) || os(tvOS) || os(visionOS)
+      navigationViewStyle(.stack)
+    #else
+      self
+    #endif
   }
 }
