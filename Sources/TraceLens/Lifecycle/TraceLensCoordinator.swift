@@ -115,6 +115,17 @@ actor TraceLensCoordinator {
     )
   }
 
+  func bffCurlCommand(
+    transaction: NetworkTransaction,
+    destination: CurlBFFDestination
+  ) async throws -> String {
+    try await CurlBFFExport.command(
+      transaction: transaction,
+      destination: destination,
+      bodies: bodies
+    )
+  }
+
   // MARK: - Presentation
 
   private func updatePresentation(

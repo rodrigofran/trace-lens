@@ -1,6 +1,12 @@
 import SwiftUI
 import TraceLensCore
 
+#if canImport(UIKit)
+  import UIKit
+#elseif canImport(AppKit)
+  import AppKit
+#endif
+
 struct RequestDetail: View {
   // MARK: - Properties
 
@@ -9,6 +15,7 @@ struct RequestDetail: View {
   let bffHostSuffixes: [CurlBFFEnvironment: String]
   let onExport: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
   let onExportBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> URL
+  let onCopyBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> String
 
   @State private var selectedTab = RequestDetailTab.overview
   @State private var showingExportOptions = false
@@ -61,6 +68,9 @@ struct RequestDetail: View {
       ) { destination in
         showingBFFCurlEditor = false
         exportBFFCurl(destination: destination)
+      } onCopy: { destination in
+        showingBFFCurlEditor = false
+        copyBFFCurl(destination: destination)
       }
     }
     .confirmationDialog(
@@ -110,6 +120,22 @@ struct RequestDetail: View {
     }
   }
 
+  private func copyBFFCurl(destination: CurlBFFDestination) {
+    Task {
+      do {
+        let command = try await onCopyBFFCurl(transaction, destination)
+        await MainActor.run {
+          TraceLensPasteboard.copy(command)
+          showToast("CURL copiado para a área de transferência")
+        }
+      } catch {
+        await MainActor.run {
+          showToast(error.localizedDescription)
+        }
+      }
+    }
+  }
+
   private func showToast(_ message: String) {
     toast = message
 
@@ -127,6 +153,7 @@ private struct BFFCurlExportView: View {
   let transaction: NetworkTransaction
   let hostSuffixes: [CurlBFFEnvironment: String]
   let onExport: (CurlBFFDestination) -> Void
+  let onCopy: (CurlBFFDestination) -> Void
 
   @Environment(\.dismiss) private var dismiss
   @State private var environment: CurlBFFEnvironment = .development
@@ -136,11 +163,13 @@ private struct BFFCurlExportView: View {
   init(
     transaction: NetworkTransaction,
     hostSuffixes: [CurlBFFEnvironment: String],
-    onExport: @escaping (CurlBFFDestination) -> Void
+    onExport: @escaping (CurlBFFDestination) -> Void,
+    onCopy: @escaping (CurlBFFDestination) -> Void
   ) {
     self.transaction = transaction
     self.hostSuffixes = hostSuffixes
     self.onExport = onExport
+    self.onCopy = onCopy
     _host = State(initialValue: Self.host(for: transaction, environment: .development, suffixes: hostSuffixes))
   }
 
@@ -153,7 +182,7 @@ private struct BFFCurlExportView: View {
             Text("UAT").tag(CurlBFFEnvironment.uat)
             Text("localhost").tag(CurlBFFEnvironment.localhostPort)
           }
-          .onChange(of: environment) { _, value in
+          .onChange(of: environment) { value in
             host = Self.host(for: transaction, environment: value, suffixes: hostSuffixes)
           }
         }
@@ -180,8 +209,13 @@ private struct BFFCurlExportView: View {
         ToolbarItem(placement: .cancellationAction) {
           Button("Cancelar") { dismiss() }
         }
-        ToolbarItem(placement: .confirmationAction) {
-          Button("Exportar") {
+        ToolbarItem(placement: .automatic) {
+          Button("Copiar CURL") {
+            onCopy(.init(host: host, intermediatePath: intermediatePath))
+          }
+        }
+        ToolbarItem(placement: .automatic) {
+          Button("Exportar arquivo") {
             onExport(.init(host: host, intermediatePath: intermediatePath))
           }
         }
@@ -201,6 +235,18 @@ private struct BFFCurlExportView: View {
 
     let component = transaction.request.parsed.technicalService ?? ""
     return component + (suffixes[environment] ?? "")
+  }
+}
+
+private enum TraceLensPasteboard {
+  @MainActor
+  static func copy(_ value: String) {
+    #if canImport(UIKit)
+      UIPasteboard.general.string = value
+    #elseif canImport(AppKit)
+      NSPasteboard.general.clearContents()
+      NSPasteboard.general.setString(value, forType: .string)
+    #endif
   }
 }
 

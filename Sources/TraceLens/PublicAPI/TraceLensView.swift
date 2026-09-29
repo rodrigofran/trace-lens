@@ -27,7 +27,8 @@ public struct TraceLensView: View {
       onClear: TraceLens.clearSession,
       onExport: TraceLens.exportSession,
       onExportTransaction: TraceLens.exportTransaction,
-      onExportBFFCurl: TraceLens.exportBFFCurl
+      onExportBFFCurl: TraceLens.exportBFFCurl,
+      onCopyBFFCurl: TraceLens.bffCurlCommand
     )
   }
 }

@@ -8,16 +8,28 @@ enum CurlBFFExport {
     destination: CurlBFFDestination,
     bodies: TemporaryBodyStore?
   ) async throws -> URL {
-    let body = await bodyData(for: transaction.request.body, bodies: bodies)
-    let command = try CurlExporter.bffCommand(
-      for: transaction,
-      bodyData: body,
-      destination: destination
+    let command = try await command(
+      transaction: transaction,
+      destination: destination,
+      bodies: bodies
     )
 
     return try ExportFileWriter.writeText(
       command + "\n",
       named: "tracelens-bff-curl-\(transaction.id.uuidString)-\(ExportFileWriter.timestamp()).sh"
+    )
+  }
+
+  static func command(
+    transaction: NetworkTransaction,
+    destination: CurlBFFDestination,
+    bodies: TemporaryBodyStore?
+  ) async throws -> String {
+    let body = await bodyData(for: transaction.request.body, bodies: bodies)
+    return try CurlExporter.bffCommand(
+      for: transaction,
+      bodyData: body,
+      destination: destination
     )
   }
 

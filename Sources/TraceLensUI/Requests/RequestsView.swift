@@ -11,6 +11,7 @@ struct RequestsScreen: View {
   let onClose: (() -> Void)?
   let onExportTransaction: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
   let onExportBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> URL
+  let onCopyBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> String
 
   // MARK: - View
 
@@ -42,7 +43,8 @@ struct RequestsScreen: View {
                   policy: policy,
                   bffHostSuffixes: bffHostSuffixes,
                   onExport: onExportTransaction,
-                  onExportBFFCurl: onExportBFFCurl
+                  onExportBFFCurl: onExportBFFCurl,
+                  onCopyBFFCurl: onCopyBFFCurl
                 )
               ) {
                 TransactionRow(transaction: transaction)

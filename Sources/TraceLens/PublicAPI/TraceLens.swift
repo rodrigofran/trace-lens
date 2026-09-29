@@ -78,6 +78,14 @@ public enum TraceLens {
     try await coordinator.exportBFFCurl(transaction: transaction, destination: destination)
   }
 
+  /// Creates a runnable cURL command that calls the request's BFF directly.
+  public static func bffCurlCommand(
+    _ transaction: NetworkTransaction,
+    destination: CurlBFFDestination
+  ) async throws -> String {
+    try await coordinator.bffCurlCommand(transaction: transaction, destination: destination)
+  }
+
   // MARK: - Passive Observation
 
   /// Begins passive observation of a request already owned by the host networking stack.

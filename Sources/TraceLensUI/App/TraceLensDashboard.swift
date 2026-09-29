@@ -17,6 +17,7 @@ public struct TraceLensDashboard: View {
   private let onExport: (TraceLensExportFormat) async throws -> URL
   private let onExportTransaction: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
   private let onExportBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> URL
+  private let onCopyBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> String
 
   // MARK: - Initialization
 
@@ -34,6 +35,9 @@ public struct TraceLensDashboard: View {
     },
     onExportBFFCurl: @escaping (NetworkTransaction, CurlBFFDestination) async throws -> URL = {
       _, _ in throw TraceLensDashboardError.exportUnavailable
+    },
+    onCopyBFFCurl: @escaping (NetworkTransaction, CurlBFFDestination) async throws -> String = {
+      _, _ in throw TraceLensDashboardError.exportUnavailable
     }
   ) {
     self.store = store
@@ -44,6 +48,7 @@ public struct TraceLensDashboard: View {
     self.onExport = onExport
     self.onExportTransaction = onExportTransaction
     self.onExportBFFCurl = onExportBFFCurl
+    self.onCopyBFFCurl = onCopyBFFCurl
 
     _model = StateObject(
       wrappedValue: TraceLensViewModel(
@@ -63,7 +68,8 @@ public struct TraceLensDashboard: View {
         bffHostSuffixes: configuration.bffHostSuffixes,
         onClose: onClose,
         onExportTransaction: onExportTransaction,
-        onExportBFFCurl: onExportBFFCurl
+        onExportBFFCurl: onExportBFFCurl,
+        onCopyBFFCurl: onCopyBFFCurl
       )
         .tabItem { Label("Requests", systemImage: "list.bullet.rectangle") }
 

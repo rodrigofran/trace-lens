@@ -76,7 +76,7 @@ let bffCurl = try await TraceLens.exportBFFCurl(
 
 O formato JSON preserva a estrutura completa para debug técnico. TXT gera um relatório de leitura rápida, com request, response, headers, bodies e métricas organizados em texto.
 
-Na tela de uma request, **Exportar request > CURL — BFF** abre uma tela de montagem. Configure os sufixos de host por ambiente no app hospedeiro; o TraceLens preenche o host com `<componente><sufixo>`, mas ele pode ser editado. Informe também um path intermediário, se existir entre o host e o endpoint — caso contrário, deixe-o em branco. O comando preserva método, endpoint, query string, headers e body e usa o nome técnico do componente extraído pela configuração de `endpointPresentation`. A opção exige captura completa e um header `Authorization: Bearer …`.
+Na tela de uma request, **Exportar request > CURL — BFF** abre uma tela de montagem. Configure os sufixos de host por ambiente no app hospedeiro; o TraceLens preenche o host com `<componente><sufixo>`, mas ele pode ser editado. Informe também um path intermediário, se existir entre o host e o endpoint — caso contrário, deixe-o em branco. Além de exportar um arquivo, a tela permite copiar o comando para a área de transferência. O comando preserva método, endpoint, query string, headers e body e usa o nome técnico do componente extraído pela configuração de `endpointPresentation`. A opção exige captura completa e um header `Authorization: Bearer …`.
 
 ## Configurações da tela Settings
 
