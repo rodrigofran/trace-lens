@@ -73,9 +73,9 @@ public enum TraceLens {
   /// share it only through approved channels.
   public static func exportBFFCurl(
     _ transaction: NetworkTransaction,
-    environment: CurlBFFEnvironment
+    destination: CurlBFFDestination
   ) async throws -> URL {
-    try await coordinator.exportBFFCurl(transaction: transaction, environment: environment)
+    try await coordinator.exportBFFCurl(transaction: transaction, destination: destination)
   }
 
   // MARK: - Passive Observation

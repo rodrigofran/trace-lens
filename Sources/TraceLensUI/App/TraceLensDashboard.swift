@@ -16,7 +16,7 @@ public struct TraceLensDashboard: View {
   private let onClear: () async -> Void
   private let onExport: (TraceLensExportFormat) async throws -> URL
   private let onExportTransaction: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
-  private let onExportBFFCurl: (NetworkTransaction, CurlBFFEnvironment) async throws -> URL
+  private let onExportBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> URL
 
   // MARK: - Initialization
 
@@ -32,7 +32,7 @@ public struct TraceLensDashboard: View {
     onExportTransaction: @escaping (NetworkTransaction, TraceLensExportFormat) async throws -> URL = {
       _, _ in throw TraceLensDashboardError.exportUnavailable
     },
-    onExportBFFCurl: @escaping (NetworkTransaction, CurlBFFEnvironment) async throws -> URL = {
+    onExportBFFCurl: @escaping (NetworkTransaction, CurlBFFDestination) async throws -> URL = {
       _, _ in throw TraceLensDashboardError.exportUnavailable
     }
   ) {
@@ -60,6 +60,7 @@ public struct TraceLensDashboard: View {
       RequestsScreen(
         model: model,
         policy: model.settings.sensitiveDataPolicy,
+        bffHostSuffixes: configuration.bffHostSuffixes,
         onClose: onClose,
         onExportTransaction: onExportTransaction,
         onExportBFFCurl: onExportBFFCurl

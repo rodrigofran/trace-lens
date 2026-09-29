@@ -5,14 +5,14 @@ import TraceLensStorage
 enum CurlBFFExport {
   static func export(
     transaction: NetworkTransaction,
-    environment: CurlBFFEnvironment,
+    destination: CurlBFFDestination,
     bodies: TemporaryBodyStore?
   ) async throws -> URL {
     let body = await bodyData(for: transaction.request.body, bodies: bodies)
     let command = try CurlExporter.bffCommand(
       for: transaction,
       bodyData: body,
-      environment: environment
+      destination: destination
     )
 
     return try ExportFileWriter.writeText(

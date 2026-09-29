@@ -13,6 +13,11 @@ TraceLens.start(configuration: .init(
     defaultCapture: .metadata,
     configuredScopes: [.host("api.exemplo.com/v1", capture: .full)],
     endpointPresentation: .serviceAfterPathPrefix("/api/v2"),
+    bffHostSuffixes: [
+      .development: ".dev.example.com",
+      .uat: ".uat.example.com",
+      .localhost: ".local.example.com"
+    ],
     serviceAliases: ["payments": "Pagamentos"]
 ))
 ```
@@ -63,12 +68,15 @@ let sessionJSON = try await TraceLens.exportSession(format: .json)
 let sessionTXT = try await TraceLens.exportSession(format: .text)
 let requestJSON = try await TraceLens.exportTransaction(transaction, format: .json)
 let requestTXT = try await TraceLens.exportTransaction(transaction, format: .text)
-let bffCurl = try await TraceLens.exportBFFCurl(transaction, environment: .development)
+let bffCurl = try await TraceLens.exportBFFCurl(
+    transaction,
+    destination: .init(host: "payments.dev.example.com")
+)
 ```
 
 O formato JSON preserva a estrutura completa para debug técnico. TXT gera um relatório de leitura rápida, com request, response, headers, bodies e métricas organizados em texto.
 
-Na tela de uma request, **Exportar request > CURL — BFF** permite escolher DEV, UAT ou localhost. O comando preserva método, endpoint, query string, headers e body, troca a rota do gateway por `https://<componente>.dev.sicredi.cloud`, `https://<componente>.uat.sicredi.cloud` ou `http://localhost:8080`, e usa o nome técnico do componente extraído pela configuração de `endpointPresentation`. A opção exige captura completa e um header `Authorization: Bearer …`.
+Na tela de uma request, **Exportar request > CURL — BFF** abre uma tela de montagem. Configure os sufixos de host por ambiente no app hospedeiro; o TraceLens preenche o host com `<componente><sufixo>`, mas ele pode ser editado. Informe também um path intermediário, se existir entre o host e o endpoint — caso contrário, deixe-o em branco. O comando preserva método, endpoint, query string, headers e body e usa o nome técnico do componente extraído pela configuração de `endpointPresentation`. A opção exige captura completa e um header `Authorization: Bearer …`.
 
 ## Configurações da tela Settings
 

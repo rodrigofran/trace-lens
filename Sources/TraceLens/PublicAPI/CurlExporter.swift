@@ -62,7 +62,7 @@ public enum CurlExporter {
   public static func bffCommand(
     for transaction: NetworkTransaction,
     bodyData: Data?,
-    environment: CurlBFFEnvironment
+    destination: CurlBFFDestination
   ) throws -> String {
     guard transaction.captureLevel == .full else {
       throw Error.incompleteCapture
@@ -84,10 +84,9 @@ public enum CurlExporter {
     }
 
     guard let url = bffURL(
-      component: component,
       endpoint: transaction.request.parsed.endpoint,
       originalURL: transaction.request.url,
-      environment: environment
+      destination: destination
     ) else {
       throw Error.invalidDestination
     }
@@ -115,30 +114,32 @@ public enum CurlExporter {
   }
 
   private static func bffURL(
-    component: String,
     endpoint: String,
     originalURL: URL,
-    environment: CurlBFFEnvironment
+    destination: CurlBFFDestination
   ) -> URL? {
     var components = URLComponents()
-    switch environment {
-    case .development:
-      components.scheme = "https"
-      components.host = "\(component).dev.sicredi.cloud"
-    case .uat:
-      components.scheme = "https"
-      components.host = "\(component).uat.sicredi.cloud"
-    case .localhost:
-      components.scheme = "http"
-      components.host = "localhost"
-      components.port = 8080
-    }
+    let host = destination.host.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !host.isEmpty else { return nil }
 
-    components.percentEncodedPath = endpoint
+    components.scheme = "https"
+    components.host = host
+    components.percentEncodedPath = combinedPath(
+      destination.intermediatePath,
+      endpoint
+    )
     components.percentEncodedQuery = URLComponents(
       url: originalURL,
       resolvingAgainstBaseURL: false
     )?.percentEncodedQuery
     return components.url
+  }
+
+  private static func combinedPath(_ intermediatePath: String, _ endpoint: String) -> String {
+    let prefix = intermediatePath.trimmingCharacters(in: .whitespacesAndNewlines)
+      .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+    let destination = endpoint.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+    let segments = [prefix, destination].filter { !$0.isEmpty }
+    return "/" + segments.joined(separator: "/")
   }
 }

@@ -106,11 +106,11 @@ actor TraceLensCoordinator {
 
   func exportBFFCurl(
     transaction: NetworkTransaction,
-    environment: CurlBFFEnvironment
+    destination: CurlBFFDestination
   ) async throws -> URL {
     try await CurlBFFExport.export(
       transaction: transaction,
-      environment: environment,
+      destination: destination,
       bodies: bodies
     )
   }

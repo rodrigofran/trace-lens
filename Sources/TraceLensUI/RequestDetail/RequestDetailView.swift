@@ -6,12 +6,13 @@ struct RequestDetail: View {
 
   let transaction: NetworkTransaction
   let policy: SensitiveDataPolicy
+  let bffHostSuffixes: [CurlBFFEnvironment: String]
   let onExport: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
-  let onExportBFFCurl: (NetworkTransaction, CurlBFFEnvironment) async throws -> URL
+  let onExportBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> URL
 
   @State private var selectedTab = RequestDetailTab.overview
   @State private var showingExportOptions = false
-  @State private var showingBFFEnvironmentOptions = false
+  @State private var showingBFFCurlEditor = false
   @State private var shareFile: TraceLensShareFile?
   @State private var toast: String?
 
@@ -53,6 +54,15 @@ struct RequestDetail: View {
         shareFile = nil
       }
     }
+    .sheet(isPresented: $showingBFFCurlEditor) {
+      BFFCurlExportView(
+        transaction: transaction,
+        hostSuffixes: bffHostSuffixes
+      ) { destination in
+        showingBFFCurlEditor = false
+        exportBFFCurl(destination: destination)
+      }
+    }
     .confirmationDialog(
       "Exportar request",
       isPresented: $showingExportOptions,
@@ -67,24 +77,7 @@ struct RequestDetail: View {
       }
 
       Button("CURL — BFF") {
-        showingBFFEnvironmentOptions = true
-      }
-    }
-    .confirmationDialog(
-      "Exportar CURL — BFF",
-      isPresented: $showingBFFEnvironmentOptions,
-      titleVisibility: .visible
-    ) {
-      Button("DEV") {
-        exportBFFCurl(environment: .development)
-      }
-
-      Button("UAT") {
-        exportBFFCurl(environment: .uat)
-      }
-
-      Button("localhost") {
-        exportBFFCurl(environment: .localhost)
+        showingBFFCurlEditor = true
       }
     }
     .overlay(alignment: .top) {
@@ -107,10 +100,10 @@ struct RequestDetail: View {
     }
   }
 
-  private func exportBFFCurl(environment: CurlBFFEnvironment) {
+  private func exportBFFCurl(destination: CurlBFFDestination) {
     Task {
       do {
-        shareFile = try await .init(url: onExportBFFCurl(transaction, environment))
+        shareFile = try await .init(url: onExportBFFCurl(transaction, destination))
       } catch {
         showToast(error.localizedDescription)
       }
@@ -127,6 +120,82 @@ struct RequestDetail: View {
         toast = nil
       }
     }
+  }
+}
+
+private struct BFFCurlExportView: View {
+  let transaction: NetworkTransaction
+  let hostSuffixes: [CurlBFFEnvironment: String]
+  let onExport: (CurlBFFDestination) -> Void
+
+  @Environment(\.dismiss) private var dismiss
+  @State private var environment: CurlBFFEnvironment = .development
+  @State private var host: String
+  @State private var intermediatePath = ""
+
+  init(
+    transaction: NetworkTransaction,
+    hostSuffixes: [CurlBFFEnvironment: String],
+    onExport: @escaping (CurlBFFDestination) -> Void
+  ) {
+    self.transaction = transaction
+    self.hostSuffixes = hostSuffixes
+    self.onExport = onExport
+    _host = State(initialValue: Self.host(for: transaction, environment: .development, suffixes: hostSuffixes))
+  }
+
+  var body: some View {
+    NavigationStack {
+      Form {
+        Section("Ambiente") {
+          Picker("Ambiente", selection: $environment) {
+            Text("DEV").tag(CurlBFFEnvironment.development)
+            Text("UAT").tag(CurlBFFEnvironment.uat)
+            Text("localhost").tag(CurlBFFEnvironment.localhost)
+          }
+          .onChange(of: environment) { _, value in
+            host = Self.host(for: transaction, environment: value, suffixes: hostSuffixes)
+          }
+        }
+
+        Section("Destino BFF") {
+          TextField("Host", text: $host)
+          Text("Pré-preenchido com o componente técnico e o sufixo configurado. Você pode editar antes de exportar.")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+
+          TextField("Path intermediário (opcional)", text: $intermediatePath)
+          Text("Caso não exista um path entre o host e o endpoint, deixe em branco.")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+        }
+
+        Section("Endpoint capturado") {
+          Text(transaction.request.parsed.endpoint)
+            .textSelection(.enabled)
+        }
+      }
+      .navigationTitle("Exportar CURL — BFF")
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          Button("Cancelar") { dismiss() }
+        }
+        ToolbarItem(placement: .confirmationAction) {
+          Button("Exportar") {
+            onExport(.init(host: host, intermediatePath: intermediatePath))
+          }
+        }
+      }
+    }
+  }
+
+  private static func host(
+    for transaction: NetworkTransaction,
+    environment: CurlBFFEnvironment,
+    suffixes: [CurlBFFEnvironment: String]
+  ) -> String {
+    let component = transaction.request.parsed.technicalService ?? ""
+    return component + (suffixes[environment] ?? "")
   }
 }
 

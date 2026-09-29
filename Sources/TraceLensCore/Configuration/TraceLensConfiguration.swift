@@ -45,6 +45,10 @@ public struct TraceLensConfiguration: Sendable {
   public var sensitiveDataPolicy: SensitiveDataPolicy
   public var endpointPresentation: EndpointPresentationStrategy
   public var serviceAliases: [String: String]
+  /// Suffixes appended to a technical component to prefill the BFF host.
+  /// For example, `.development: ".dev.example.com"` turns
+  /// `payments` into `payments.dev.example.com`.
+  public var bffHostSuffixes: [CurlBFFEnvironment: String]
   public var captureNetworkTraffic: Bool
   public var captureTaskMetrics: Bool
 
@@ -61,6 +65,7 @@ public struct TraceLensConfiguration: Sendable {
     sensitiveDataPolicy: SensitiveDataPolicy = .redacted,
     endpointPresentation: EndpointPresentationStrategy = .automatic,
     serviceAliases: [String: String] = [:],
+    bffHostSuffixes: [CurlBFFEnvironment: String] = [:],
     captureNetworkTraffic: Bool = true,
     captureTaskMetrics: Bool = true,
     sessionLimits: SessionLimits = .default,
@@ -71,6 +76,7 @@ public struct TraceLensConfiguration: Sendable {
     self.sensitiveDataPolicy = sensitiveDataPolicy
     self.endpointPresentation = endpointPresentation
     self.serviceAliases = serviceAliases
+    self.bffHostSuffixes = bffHostSuffixes
     self.captureNetworkTraffic = captureNetworkTraffic
     self.captureTaskMetrics = captureTaskMetrics
     self.sessionLimits = sessionLimits

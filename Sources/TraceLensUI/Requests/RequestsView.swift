@@ -7,9 +7,10 @@ struct RequestsScreen: View {
   @ObservedObject var model: TraceLensViewModel
 
   let policy: SensitiveDataPolicy
+  let bffHostSuffixes: [CurlBFFEnvironment: String]
   let onClose: (() -> Void)?
   let onExportTransaction: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
-  let onExportBFFCurl: (NetworkTransaction, CurlBFFEnvironment) async throws -> URL
+  let onExportBFFCurl: (NetworkTransaction, CurlBFFDestination) async throws -> URL
 
   // MARK: - View
 
@@ -39,6 +40,7 @@ struct RequestsScreen: View {
                 destination: RequestDetail(
                   transaction: transaction,
                   policy: policy,
+                  bffHostSuffixes: bffHostSuffixes,
                   onExport: onExportTransaction,
                   onExportBFFCurl: onExportBFFCurl
                 )

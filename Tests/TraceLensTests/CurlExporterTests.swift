@@ -4,30 +4,35 @@ import XCTest
 import TraceLensCore
 
 final class CurlExporterTests: XCTestCase {
-  func testBFFCommandUsesDevelopmentHostEndpointQueryAndBearer() throws {
+  func testBFFCommandUsesConfiguredHostEndpointQueryAndBearer() throws {
     let command = try CurlExporter.bffCommand(
       for: transaction(),
       bodyData: Data("{\"amount\":100}".utf8),
-      environment: .development
+      destination: .init(host: "payment-service.dev.example.com")
     )
 
     XCTAssertEqual(
       command,
-      "curl -X POST 'https://payment-service.dev.sicredi.cloud/v1/payments?dryRun=true' -H 'Authorization: Bearer token-value' -H 'Content-Type: application/json' --data-raw '{\"amount\":100}'"
+      "curl -X POST 'https://payment-service.dev.example.com/v1/payments?dryRun=true' -H 'Authorization: Bearer token-value' -H 'Content-Type: application/json' --data-raw '{\"amount\":100}'"
     )
   }
 
-  func testBFFCommandUsesUATAndLocalhostDestinations() throws {
-    XCTAssertTrue(try CurlExporter.bffCommand(for: transaction(), bodyData: nil, environment: .uat)
-      .contains("https://payment-service.uat.sicredi.cloud/v1/payments?dryRun=true"))
-    XCTAssertTrue(try CurlExporter.bffCommand(for: transaction(), bodyData: nil, environment: .localhost)
-      .contains("http://localhost:8080/v1/payments?dryRun=true"))
+  func testBFFCommandIncludesOptionalIntermediatePath() throws {
+    XCTAssertTrue(try CurlExporter.bffCommand(
+      for: transaction(),
+      bodyData: nil,
+      destination: .init(host: "payment-service.uat.example.com", intermediatePath: "/api/bff/")
+    ).contains("https://payment-service.uat.example.com/api/bff/v1/payments?dryRun=true"))
   }
 
   func testBFFCommandRequiresBearerToken() throws {
     var value = transaction()
     value.request.headers = [:]
-    XCTAssertThrowsError(try CurlExporter.bffCommand(for: value, bodyData: nil, environment: .development)) {
+    XCTAssertThrowsError(try CurlExporter.bffCommand(
+      for: value,
+      bodyData: nil,
+      destination: .init(host: "payment-service.dev.example.com")
+    )) {
       XCTAssertEqual($0 as? CurlExporter.Error, .missingBearerToken)
     }
   }
