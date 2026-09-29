@@ -119,11 +119,21 @@ public enum CurlExporter {
     destination: CurlBFFDestination
   ) -> URL? {
     var components = URLComponents()
-    let host = destination.host.trimmingCharacters(in: .whitespacesAndNewlines)
-    guard !host.isEmpty else { return nil }
+    let destinationHost = destination.host.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !destinationHost.isEmpty else { return nil }
 
-    components.scheme = "https"
-    components.host = host
+    if destinationHost.lowercased() == "localhost"
+      || destinationHost.lowercased().hasPrefix("localhost:")
+    {
+      let localhost = URLComponents(string: "http://\(destinationHost)")
+      guard localhost?.host?.lowercased() == "localhost" else { return nil }
+      components.scheme = "http"
+      components.host = "localhost"
+      components.port = localhost?.port
+    } else {
+      components.scheme = "https"
+      components.host = destinationHost
+    }
     components.percentEncodedPath = combinedPath(
       destination.intermediatePath,
       endpoint

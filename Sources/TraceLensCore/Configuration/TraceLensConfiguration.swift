@@ -45,9 +45,11 @@ public struct TraceLensConfiguration: Sendable {
   public var sensitiveDataPolicy: SensitiveDataPolicy
   public var endpointPresentation: EndpointPresentationStrategy
   public var serviceAliases: [String: String]
-  /// Suffixes appended to a technical component to prefill the BFF host.
-  /// For example, `.development: ".dev.example.com"` turns
-  /// `payments` into `payments.dev.example.com`.
+  /// Values used to prefill the BFF host. Development and UAT values are
+  /// appended to the technical component; `localhostPort` is the local port.
+  /// For example, `.development: ".dev.example.com"` turns `payments` into
+  /// `payments.dev.example.com`, while `.localhostPort: "8080"` becomes
+  /// `localhost:8080`.
   public var bffHostSuffixes: [CurlBFFEnvironment: String]
   public var captureNetworkTraffic: Bool
   public var captureTaskMetrics: Bool

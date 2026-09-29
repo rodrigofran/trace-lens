@@ -25,6 +25,14 @@ final class CurlExporterTests: XCTestCase {
     ).contains("https://payment-service.uat.example.com/api/bff/v1/payments?dryRun=true"))
   }
 
+  func testBFFCommandUsesLocalhostPortWithoutTechnicalComponent() throws {
+    XCTAssertTrue(try CurlExporter.bffCommand(
+      for: transaction(),
+      bodyData: nil,
+      destination: .init(host: "localhost:8080")
+    ).contains("http://localhost:8080/v1/payments?dryRun=true"))
+  }
+
   func testBFFCommandRequiresBearerToken() throws {
     var value = transaction()
     value.request.headers = [:]

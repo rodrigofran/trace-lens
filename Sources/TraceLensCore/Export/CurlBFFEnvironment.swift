@@ -4,7 +4,7 @@ import Foundation
 public enum CurlBFFEnvironment: String, CaseIterable, Sendable, Identifiable {
   case development
   case uat
-  case localhost
+  case localhostPort
 
   public var id: Self { self }
 }

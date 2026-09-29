@@ -16,7 +16,7 @@ TraceLens.start(configuration: .init(
     bffHostSuffixes: [
       .development: ".dev.example.com",
       .uat: ".uat.example.com",
-      .localhost: ".local.example.com"
+      .localhostPort: "8080"
     ],
     serviceAliases: ["payments": "Pagamentos"]
 ))

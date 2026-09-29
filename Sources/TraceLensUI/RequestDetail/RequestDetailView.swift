@@ -145,13 +145,13 @@ private struct BFFCurlExportView: View {
   }
 
   var body: some View {
-    NavigationStack {
+    NavigationView {
       Form {
         Section("Ambiente") {
           Picker("Ambiente", selection: $environment) {
             Text("DEV").tag(CurlBFFEnvironment.development)
             Text("UAT").tag(CurlBFFEnvironment.uat)
-            Text("localhost").tag(CurlBFFEnvironment.localhost)
+            Text("localhost").tag(CurlBFFEnvironment.localhostPort)
           }
           .onChange(of: environment) { _, value in
             host = Self.host(for: transaction, environment: value, suffixes: hostSuffixes)
@@ -194,6 +194,11 @@ private struct BFFCurlExportView: View {
     environment: CurlBFFEnvironment,
     suffixes: [CurlBFFEnvironment: String]
   ) -> String {
+    if environment == .localhostPort {
+      let port = suffixes[environment, default: ""].trimmingCharacters(in: .whitespacesAndNewlines)
+      return port.isEmpty ? "localhost" : "localhost:\(port)"
+    }
+
     let component = transaction.request.parsed.technicalService ?? ""
     return component + (suffixes[environment] ?? "")
   }
