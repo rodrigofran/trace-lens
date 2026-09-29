@@ -66,6 +66,18 @@ public enum TraceLens {
     try await coordinator.export(transaction: transaction, format: format)
   }
 
+  /// Exports a runnable cURL command that calls the request's BFF directly.
+  ///
+  /// The request must have been captured with `.full` detail and contain an
+  /// `Authorization: Bearer …` header. The generated file contains that token;
+  /// share it only through approved channels.
+  public static func exportBFFCurl(
+    _ transaction: NetworkTransaction,
+    environment: CurlBFFEnvironment
+  ) async throws -> URL {
+    try await coordinator.exportBFFCurl(transaction: transaction, environment: environment)
+  }
+
   // MARK: - Passive Observation
 
   /// Begins passive observation of a request already owned by the host networking stack.

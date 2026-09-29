@@ -63,9 +63,12 @@ let sessionJSON = try await TraceLens.exportSession(format: .json)
 let sessionTXT = try await TraceLens.exportSession(format: .text)
 let requestJSON = try await TraceLens.exportTransaction(transaction, format: .json)
 let requestTXT = try await TraceLens.exportTransaction(transaction, format: .text)
+let bffCurl = try await TraceLens.exportBFFCurl(transaction, environment: .development)
 ```
 
 O formato JSON preserva a estrutura completa para debug técnico. TXT gera um relatório de leitura rápida, com request, response, headers, bodies e métricas organizados em texto.
+
+Na tela de uma request, **Exportar request > CURL — BFF** permite escolher DEV, UAT ou localhost. O comando preserva método, endpoint, query string, headers e body, troca a rota do gateway por `https://<componente>.dev.sicredi.cloud`, `https://<componente>.uat.sicredi.cloud` ou `http://localhost:8080`, e usa o nome técnico do componente extraído pela configuração de `endpointPresentation`. A opção exige captura completa e um header `Authorization: Bearer …`.
 
 ## Configurações da tela Settings
 
@@ -96,7 +99,7 @@ As regras configuradas ficam no código do app hospedeiro. A aba Escopos pode cr
 
 A prioridade é: próxima request, sessão, regra configurada e, por último, captura padrão. Dentro da mesma origem, a regra mais específica vence.
 
-A política padrão é `.redacted`: ela mascara headers sensíveis na interface, no comando cURL e na exportação. Bodies completos são exportados exatamente como foram capturados; por isso, habilite `Detalhes completos` apenas em ambientes de debug aprovados.
+A política padrão é `.redacted`: ela mascara headers sensíveis na interface, no comando cURL comum e na exportação. O **CURL — BFF** é uma exceção intencional: para ser executável, ele inclui o Bearer token original no arquivo exportado. Compartilhe esse arquivo somente por canais aprovados. Bodies completos são exportados exatamente como foram capturados; por isso, habilite `Detalhes completos` apenas em ambientes de debug aprovados.
 
 `Detalhes completos` captura headers e body de request/response. `Metadata` mantém URL, método, status e duração. Recomenda-se usar `Metadata` como padrão e `Detalhes completos` apenas em hosts seguros durante uma investigação.
 

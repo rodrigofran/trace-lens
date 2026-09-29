@@ -15,6 +15,7 @@ let package = Package(
         .testTarget(name: "TraceLensCoreTests", dependencies: ["TraceLensCore"]),
         .testTarget(name: "TraceLensStorageTests", dependencies: ["TraceLensStorage", "TraceLensCore"]),
         .testTarget(name: "TraceLensMetricsTests", dependencies: ["TraceLensMetrics", "TraceLensCore"]),
-        .testTarget(name: "TraceLensCaptureTests", dependencies: ["TraceLensCapture", "TraceLensStorage", "TraceLensCore"])
+        .testTarget(name: "TraceLensCaptureTests", dependencies: ["TraceLensCapture", "TraceLensStorage", "TraceLensCore"]),
+        .testTarget(name: "TraceLensTests", dependencies: ["TraceLens", "TraceLensCore"])
     ]
 )

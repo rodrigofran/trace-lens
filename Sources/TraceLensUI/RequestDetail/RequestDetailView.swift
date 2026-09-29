@@ -7,9 +7,11 @@ struct RequestDetail: View {
   let transaction: NetworkTransaction
   let policy: SensitiveDataPolicy
   let onExport: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
+  let onExportBFFCurl: (NetworkTransaction, CurlBFFEnvironment) async throws -> URL
 
   @State private var selectedTab = RequestDetailTab.overview
   @State private var showingExportOptions = false
+  @State private var showingBFFEnvironmentOptions = false
   @State private var shareFile: TraceLensShareFile?
   @State private var toast: String?
 
@@ -63,6 +65,27 @@ struct RequestDetail: View {
       Button("JSON — debug técnico") {
         exportTransaction(format: .json)
       }
+
+      Button("CURL — BFF") {
+        showingBFFEnvironmentOptions = true
+      }
+    }
+    .confirmationDialog(
+      "Exportar CURL — BFF",
+      isPresented: $showingBFFEnvironmentOptions,
+      titleVisibility: .visible
+    ) {
+      Button("DEV") {
+        exportBFFCurl(environment: .development)
+      }
+
+      Button("UAT") {
+        exportBFFCurl(environment: .uat)
+      }
+
+      Button("localhost") {
+        exportBFFCurl(environment: .localhost)
+      }
     }
     .overlay(alignment: .top) {
       if let toast {
@@ -80,6 +103,16 @@ struct RequestDetail: View {
         shareFile = try await .init(url: onExport(transaction, format))
       } catch {
         showToast("Não foi possível exportar a request")
+      }
+    }
+  }
+
+  private func exportBFFCurl(environment: CurlBFFEnvironment) {
+    Task {
+      do {
+        shareFile = try await .init(url: onExportBFFCurl(transaction, environment))
+      } catch {
+        showToast(error.localizedDescription)
       }
     }
   }

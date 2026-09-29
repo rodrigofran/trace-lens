@@ -9,6 +9,7 @@ struct RequestsScreen: View {
   let policy: SensitiveDataPolicy
   let onClose: (() -> Void)?
   let onExportTransaction: (NetworkTransaction, TraceLensExportFormat) async throws -> URL
+  let onExportBFFCurl: (NetworkTransaction, CurlBFFEnvironment) async throws -> URL
 
   // MARK: - View
 
@@ -38,7 +39,8 @@ struct RequestsScreen: View {
                 destination: RequestDetail(
                   transaction: transaction,
                   policy: policy,
-                  onExport: onExportTransaction
+                  onExport: onExportTransaction,
+                  onExportBFFCurl: onExportBFFCurl
                 )
               ) {
                 TransactionRow(transaction: transaction)
