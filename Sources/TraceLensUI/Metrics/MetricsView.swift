@@ -14,7 +14,7 @@ struct MetricsScreen: View {
             MetricTile(title: "Requests", value: String(values.totalRequests))
             MetricTile(
               title: "Duração média",
-              value: values.averageDuration.map { String(format: "%.0f ms", $0 * 1000) } ?? "—")
+              value: values.averageDuration.map { String(format: "%.0f ms", $0 * 1000) } ?? "Não informado")
             MetricTile(
               title: "Taxa de erros", value: String(format: "%.1f%%", values.errorRate * 100))
             MetricTile(

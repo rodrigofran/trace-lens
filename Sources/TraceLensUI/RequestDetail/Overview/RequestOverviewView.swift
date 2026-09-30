@@ -17,8 +17,8 @@ struct RequestOverviewView: View {
   var body: some View {
     List {
       Section("Request") {
-        DetailValueRow("Serviço", value: transaction.request.parsed.displayService ?? "—")
-        DetailValueRow("Serviço técnico", value: transaction.request.parsed.technicalService ?? "—")
+        DetailValueRow("Serviço", value: transaction.request.parsed.displayService ?? "Não informado")
+        DetailValueRow("Serviço técnico", value: transaction.request.parsed.technicalService ?? "Não informado")
         DetailValueRow("Endpoint", value: transaction.request.parsed.endpoint)
         DetailValueRow("Host", value: transaction.request.parsed.host)
         DetailValueRow("Método", value: transaction.request.method.rawValue)
@@ -36,7 +36,7 @@ struct RequestOverviewView: View {
       }
 
       Section("Status") {
-        DetailValueRow("Status", value: transaction.response.map { String($0.statusCode) } ?? "—")
+        DetailValueRow("Status", value: transaction.response.map { String($0.statusCode) } ?? "Não informado")
         DetailValueRow("Captura", value: transaction.captureLevel.rawValue.capitalized)
       }
     }

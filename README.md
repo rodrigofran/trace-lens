@@ -1,147 +1,44 @@
 # TraceLens
 
-TraceLens é um pacote Swift para iOS 15+ que observa tráfego HTTP temporariamente dentro do app. Ele foi pensado para desenvolvimento, QA e debug — não para telemetria de produção.
+TraceLens é um app de inspeção de tráfego HTTP para desenvolvimento, QA e depuração. Ele ajuda a investigar o que acontece nas comunicações de rede durante uma sessão, sem substituir ferramentas de telemetria ou monitoramento de produção.
 
-## Instalação e início
+## O que o app faz
 
-Adicione este repositório pelo Swift Package Manager, importe apenas `TraceLens` e inicie-o no app hospedeiro:
+O TraceLens reúne as requests capturadas em uma única tela e apresenta as informações necessárias para entender cada chamada: serviço, endpoint, método, status, duração, headers, body e métricas de rede quando disponíveis.
 
-```swift
-import TraceLens
+Com ele, é possível:
 
-TraceLens.start(configuration: .init(
-    defaultCapture: .metadata,
-    configuredScopes: [.host("api.exemplo.com/v1", capture: .full)],
-    endpointPresentation: .serviceAfterPathPrefix("/api/v2"),
-    bffHostSuffixes: [
-      .development: ".dev.example.com",
-      .uat: ".uat.example.com",
-      .localhostPort: "8080"
-    ],
-    serviceAliases: ["payments": "Pagamentos"]
-))
-```
+- acompanhar as requests da sessão atual;
+- filtrar e localizar chamadas por serviço, endpoint ou status;
+- consultar headers, bodies e métricas de cada request;
+- definir escopos temporários de captura para uma sessão ou para a próxima request;
+- exportar a sessão ou uma request nos formatos TXT e JSON;
+- copiar ou exportar um comando `CURL - BFF` pronto para execução.
 
-`ObservationRule.host` aceita tanto apenas o domínio quanto uma URL-base. Quando houver
-um caminho após o domínio, ele passa a fazer parte do escopo: por exemplo,
-`api.uat.sicredi.io/v1/` captura somente requests cujo host seja
-`api.uat.sicredi.io` e cujo path comece em `/v1`. Também são aceitos valores com
-scheme, como `https://api.uat.sicredi.io/v1/`.
+## Captura de requests
 
-Para stacks simples, sem `URLSessionDelegate` customizado ou SSL Pinning, é possível instrumentar a configuração antes de criar a `URLSession`:
+O app trabalha com dois níveis de detalhe. O modo `Metadata` registra URL, método, status e duração. O modo `Detalhes completos` também registra headers e body da request e da response.
 
-```swift
-let configuration = TraceLens.instrument(.default)
-let session = URLSession(configuration: configuration)
-```
+Os escopos de captura permitem limitar a investigação a hosts ou caminhos específicos. Para uma mesma origem, a regra mais específica tem prioridade. As regras temporárias podem valer apenas para a próxima request ou permanecer durante a sessão atual.
 
-Para SDCore e outros stacks que controlam SSL Pinning, delegates ou a configuração da sessão, use a observação passiva. O stack continua executando a request real; o TraceLens apenas recebe os eventos:
+## Visualização e investigação
 
-```swift
-let observation = await TraceLens.beginObservation(finalURLRequest)
+Cada request mostra um resumo do serviço e do endpoint, além de abas para headers, body e métricas. O título do serviço pode refletir o nome técnico da rota ou um nome mais amigável, facilitando a leitura da lista de requests.
 
-// SDCore executa a request com sua URLSession e SSL Pinning originais.
+As métricas exibem informações como duração, tamanho transferido e dados de conexão quando esses dados forem fornecidos pela camada de rede.
 
-if let observation {
-    await TraceLens.recordResponse(
-        urlResponse,
-        body: responseData,
-        for: observation
-    )
-}
-```
+## Exportações
 
-Em caso de erro, registre-o com `await TraceLens.recordFailure(error, for: observation)`. Se o SDCore expuser métricas, use `await TraceLens.recordMetrics(metrics, for: observation)`.
+O formato TXT gera um relatório de leitura rápida. O JSON preserva a estrutura dos dados para análise técnica e compartilhamento controlado.
 
-Para apps UIKit, incluindo menus de shake, basta chamar a API agnóstica de SwiftUI:
+Na tela de uma request, a opção `CURL - BFF` permite montar um comando direcionado ao BFF. O host é preenchido a partir do componente técnico e do ambiente selecionado, e pode ser editado. Também é possível informar um path intermediário entre o host e o endpoint, copiar o comando para a área de transferência ou exportá-lo em arquivo.
 
-```swift
-TraceLens.shared.show()
-```
+O comando preserva método, endpoint, query string, headers e body. Para que seja executável, ele usa o token Bearer original e exige que a request tenha sido capturada com detalhes completos.
 
-O SDK encontra a janela ativa e apresenta sua própria tela. Se já tiver um `UIViewController`, também é possível usar `TraceLens.shared.show(from: viewController)`.
+## Privacidade e limites
 
-`TraceLensView` continua disponível para apps SwiftUI. Use `await TraceLens.clearSession()` para limpar a sessão. As exportações retornam uma URL temporária pronta para um share sheet nativo:
+Por padrão, dados sensíveis são mascarados na interface e nas exportações. A exportação `CURL - BFF` é uma exceção, pois inclui o token Bearer original para permitir a execução do comando. Compartilhe esse conteúdo apenas por canais aprovados.
 
-```swift
-let sessionJSON = try await TraceLens.exportSession(format: .json)
-let sessionTXT = try await TraceLens.exportSession(format: .text)
-let requestJSON = try await TraceLens.exportTransaction(transaction, format: .json)
-let requestTXT = try await TraceLens.exportTransaction(transaction, format: .text)
-let bffCurl = try await TraceLens.exportBFFCurl(
-    transaction,
-    destination: .init(host: "payments.dev.example.com")
-)
-```
+O TraceLens mantém somente a sessão atual e remove os arquivos temporários de body quando a sessão é limpa, interrompida ou quando o app é iniciado. Os limites padrão são 1.000 transações, 5 MB por body e 100 MB de armazenamento temporário.
 
-O formato JSON preserva a estrutura completa para debug técnico. TXT gera um relatório de leitura rápida, com request, response, headers, bodies e métricas organizados em texto.
-
-Na tela de uma request, **Exportar request > CURL — BFF** abre uma tela de montagem. Configure os sufixos de host por ambiente no app hospedeiro; o TraceLens preenche o host com `<componente><sufixo>`, mas ele pode ser editado. Informe também um path intermediário, se existir entre o host e o endpoint — caso contrário, deixe-o em branco. Além de exportar um arquivo, a tela permite copiar o comando para a área de transferência. O comando preserva método, endpoint, query string, headers e body e usa o nome técnico do componente extraído pela configuração de `endpointPresentation`. A opção exige captura completa e um header `Authorization: Bearer …`.
-
-## Configurações da tela Settings
-
-Por padrão, todos os controles são visíveis. A captura padrão é `Metadata`, a captura de rede e métricas ficam ativadas, e dados sensíveis ficam mascarados (`.redacted`).
-
-O app hospedeiro pode esconder controles que não devem ficar disponíveis ao usuário:
-
-```swift
-TraceLens.start(configuration: .init(
-    settingsControls: .init(
-        defaultCapture: true,
-        networkCapture: false,
-        taskMetrics: false,
-        sensitiveDataPolicy: false,
-        maskTokens: false,
-        transactionLimit: false,
-        clearSession: true,
-        exportSession: true
-    )
-))
-```
-
-Os parâmetros omitidos em `TraceLensSettingsControls` permanecem ativados.
-
-## Escopos e privacidade
-
-As regras configuradas ficam no código do app hospedeiro. A aba Escopos pode criar regras de captura completa para a sessão atual ou apenas para a próxima request a partir de hosts descobertos.
-
-A prioridade é: próxima request, sessão, regra configurada e, por último, captura padrão. Dentro da mesma origem, a regra mais específica vence.
-
-A política padrão é `.redacted`: ela mascara headers sensíveis na interface, no comando cURL comum e na exportação. O **CURL — BFF** é uma exceção intencional: para ser executável, ele inclui o Bearer token original no arquivo exportado. Compartilhe esse arquivo somente por canais aprovados. Bodies completos são exportados exatamente como foram capturados; por isso, habilite `Detalhes completos` apenas em ambientes de debug aprovados.
-
-`Detalhes completos` captura headers e body de request/response. `Metadata` mantém URL, método, status e duração. Recomenda-se usar `Metadata` como padrão e `Detalhes completos` apenas em hosts seguros durante uma investigação.
-
-### Título do serviço na lista de requests
-
-Use `endpointPresentation` para definir qual parte do path será exibida como título da request. Para APIs no formato `/v1/sicredi/<microserviço>/...` ou `/v2/sicredi/<microserviço>/...`, configure o índice `2` (a contagem começa em zero):
-
-```swift
-TraceLens.start(configuration: .init(
-    endpointPresentation: .serviceAtPathIndex(2),
-    serviceAliases: [
-        "payments": "Pagamentos",
-        "accounts": "Contas"
-    ]
-))
-```
-
-Assim, `/v2/sicredi/payments/orders` aparece com o título `Pagamentos` e endpoint `/orders`, sem que `v1` ou `v2` sejam usados como serviço.
-
-## Organização com múltiplos repositórios
-
-Mantenha os módulos de feature sem dependência do TraceLens:
-
-```text
-FeatureRepository/
-  Sources/
-  Tests/
-  Example/FeatureDemoApp  ← importa a feature e TraceLens
-```
-
-O exemplo incluído em `Examples/TraceLensDemo` ilustra essa organização em um app hospedeiro independente.
-
-## Limites e limitações
-
-TraceLens mantém apenas a sessão atual e remove arquivos temporários de body ao limpar/parar uma sessão e na inicialização. Os limites padrão são 1.000 transações, 5 MB por body e 100 MB de armazenamento temporário.
-
-A captura por `URLProtocol` é suportada para instâncias de `URLSessionConfiguration` instrumentadas explicitamente e em primeiro plano, mas não deve ser usada em stacks com delegate customizado ou SSL Pinning. Para esses casos, use a observação passiva. Sessões criadas antes da instrumentação, sessões em background, outras bibliotecas de rede e todos os detalhes de redirecionamento podem não ser observados. Uma falha de captura nunca deve bloquear a request original.
+Como se destina a desenvolvimento e investigação, a captura não deve interromper ou bloquear a request original. Alguns tipos de sessão, bibliotecas de rede e detalhes de redirecionamento podem não ser observados.

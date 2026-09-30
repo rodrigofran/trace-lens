@@ -9,7 +9,7 @@ enum SessionTextExporter {
     bodies: TemporaryBodyStore?
   ) async throws -> URL {
     var sections = [
-      "TraceLens — Sessão",
+      "TraceLens, Sessão",
       "ID: \(snapshot.session.id.uuidString)",
       "Iniciada em: \(formatted(snapshot.session.startedAt))",
       "Exportada em: \(formatted(.now))",
@@ -32,7 +32,7 @@ enum SessionTextExporter {
     bodies: TemporaryBodyStore?
   ) async throws -> URL {
     try ExportFileWriter.writeText(
-      await text(for: transaction, configuration: configuration, bodies: bodies, title: "TraceLens — Request"),
+      await text(for: transaction, configuration: configuration, bodies: bodies, title: "TraceLens, Request"),
       named: "tracelens-request-\(transaction.id.uuidString)-\(ExportFileWriter.timestamp()).txt"
     )
   }
@@ -51,12 +51,12 @@ enum SessionTextExporter {
     var lines = [
       title, "ID: \(transaction.id.uuidString)", "Estado: \(transaction.state.rawValue)",
       "Captura: \(transaction.captureLevel.rawValue)", "Iniciada em: \(formatted(transaction.startedAt))",
-      "Finalizada em: \(transaction.finishedAt.map(formatted) ?? "—")", "", "REQUEST",
+      "Finalizada em: \(transaction.finishedAt.map(formatted) ?? "Não informado")", "", "REQUEST",
       "\(transaction.request.method.rawValue) \(transaction.request.parsed.fullURL)",
-      "Serviço: \(transaction.request.parsed.displayService ?? "—")",
-      "Serviço técnico: \(transaction.request.parsed.technicalService ?? "—")", "Headers:",
+      "Serviço: \(transaction.request.parsed.displayService ?? "Não informado")",
+      "Serviço técnico: \(transaction.request.parsed.technicalService ?? "Não informado")", "Headers:",
       headerText(requestHeaders), "Body:", requestBody, "", "RESPONSE",
-      "Status: \(transaction.response.map { String($0.statusCode) } ?? "—")", "Headers:",
+      "Status: \(transaction.response.map { String($0.statusCode) } ?? "Não informado")", "Headers:",
       headerText(responseHeaders), "Body:", responseBody,
     ]
 
@@ -84,7 +84,7 @@ enum SessionTextExporter {
     guard contentType?.lowercased().contains("json") ?? true, let data = text.data(using: .utf8), let object = try? JSONSerialization.jsonObject(with: data), let formatted = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]), let result = String(data: formatted, encoding: .utf8) else { return text }
     return result
   }
-  private static func headerText(_ headers: [String: String]) -> String { headers.isEmpty ? "—" : headers.sorted { $0.key.localizedCaseInsensitiveCompare($1.key) == .orderedAscending }.map { "\($0.key): \($0.value)" }.joined(separator: "\n") }
-  private static func milliseconds(_ value: TimeInterval?) -> String { value.map { "\(Int(($0 * 1_000).rounded())) ms" } ?? "—" }
+  private static func headerText(_ headers: [String: String]) -> String { headers.isEmpty ? "Não informado" : headers.sorted { $0.key.localizedCaseInsensitiveCompare($1.key) == .orderedAscending }.map { "\($0.key): \($0.value)" }.joined(separator: "\n") }
+  private static func milliseconds(_ value: TimeInterval?) -> String { value.map { "\(Int(($0 * 1_000).rounded())) ms" } ?? "Não informado" }
   private static func formatted(_ date: Date) -> String { ISO8601DateFormatter().string(from: date) }
 }

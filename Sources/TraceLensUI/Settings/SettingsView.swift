@@ -118,11 +118,11 @@ struct SettingsScreen: View {
         isPresented: $showingExportOptions,
         titleVisibility: .visible
       ) {
-        Button("TXT — leitura rápida") {
+        Button("TXT, leitura rápida") {
           exportSession(format: .text)
         }
 
-        Button("JSON — debug técnico") {
+        Button("JSON, debug técnico") {
           exportSession(format: .json)
         }
       }

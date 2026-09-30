@@ -78,15 +78,15 @@ struct RequestDetail: View {
       isPresented: $showingExportOptions,
       titleVisibility: .visible
     ) {
-      Button("TXT — leitura rápida") {
+      Button("TXT, leitura rápida") {
         exportTransaction(format: .text)
       }
 
-      Button("JSON — debug técnico") {
+      Button("JSON, debug técnico") {
         exportTransaction(format: .json)
       }
 
-      Button("CURL — BFF") {
+      Button("CURL - BFF") {
         showingBFFCurlEditor = true
       }
     }
@@ -207,7 +207,7 @@ private struct BFFCurlExportView: View {
             .textSelection(.enabled)
         }
       }
-      .navigationTitle("Exportar CURL — BFF")
+      .navigationTitle("Exportar CURL - BFF")
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           Button("Cancelar") { dismiss() }
