@@ -156,7 +156,7 @@ private struct BFFCurlExportView: View {
   let onCopy: (CurlBFFDestination) -> Void
 
   @Environment(\.dismiss) private var dismiss
-  @State private var environment: CurlBFFEnvironment = .development
+  @State private var environment: CurlBFFEnvironment = .uat
   @State private var host: String
   @State private var intermediatePath = ""
 
@@ -170,7 +170,7 @@ private struct BFFCurlExportView: View {
     self.hostSuffixes = hostSuffixes
     self.onExport = onExport
     self.onCopy = onCopy
-    _host = State(initialValue: Self.host(for: transaction, environment: .development, suffixes: hostSuffixes))
+    _host = State(initialValue: Self.host(for: transaction, environment: .uat, suffixes: hostSuffixes))
   }
 
   var body: some View {
@@ -194,6 +194,9 @@ private struct BFFCurlExportView: View {
             .foregroundStyle(.secondary)
 
           TextField("Path intermediário (opcional)", text: $intermediatePath)
+            #if os(iOS)
+            .textInputAutocapitalization(.never)
+            #endif
           Text("Caso não exista um path entre o host e o endpoint, deixe em branco.")
             .font(.footnote)
             .foregroundStyle(.secondary)
@@ -234,7 +237,14 @@ private struct BFFCurlExportView: View {
     }
 
     let component = transaction.request.parsed.technicalService ?? ""
-    return component + (suffixes[environment] ?? "")
+    let suffix = suffixes[environment, default: ""]
+      .trimmingCharacters(in: .whitespacesAndNewlines)
+
+    guard !component.isEmpty, !suffix.isEmpty else {
+      return component + suffix
+    }
+
+    return component + (suffix.hasPrefix(".") ? suffix : "." + suffix)
   }
 }
 
